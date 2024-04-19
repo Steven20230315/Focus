@@ -37,12 +37,30 @@ const projectDisplaySlice = createSlice({
 		) => {
 			state.projectDisplayOrder = action.payload;
 		},
+	extraReducers: (builder: ActionReducerMapBuilder<ProjectDisplayState>) => {
+		// Add new project to projectDisplayOrder
+		builder.addCase(
+			addProject,
+			(state: ProjectDisplayState, action: PayloadAction<Project>) => {
+				console.log('addProject is called in projectDisplaySlice');
+
+				if (!state.projectDisplayOrder.includes(action.payload.projectId)) {
+					state.projectDisplayOrder.push(action.payload.projectId);
+				}
+				console.log(state.projectDisplayOrder);
+			}
+		);
+		builder.addCase(
+			// Delete project from projectDisplayOrder
+			deleteProject,
+			(state: ProjectDisplayState, action: PayloadAction<ProjectId>) => {
+				const index = state.projectDisplayOrder.indexOf(action.payload);
+				if (index !== -1) {
+					state.projectDisplayOrder.splice(index, 1);
+				}
+			}
+		);
 	},
-	// extraReducers: (builder: ActionReducerMapBuilder<ProjectDisplayState>) => {
-	// 	builder.addCase(addProject, (state, action) => {
-	// 		state.projectDisplayOrder.push(action.payload.projectId);
-	// 	});
-	// },
 });
 
 export default projectDisplaySlice.reducer;
