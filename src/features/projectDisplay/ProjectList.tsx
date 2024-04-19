@@ -11,7 +11,12 @@ import { Droppable, type DroppableProvided } from '@hello-pangea/dnd';
 
 export default function ProjectList() {
 	const projects = useSelector( selectOrderedProjects );
+	console.log(projects);
+
 	return (
+		<Droppable droppableId='sidebar'>
+			{(provided: DroppableProvided) => (
+				<div ref={provided.innerRef} {...provided.droppableProps}>
 					{projects.map((project: Project, index: number) => (
 						<Link
 							key={project.projectId}
@@ -20,5 +25,9 @@ export default function ProjectList() {
 							index={index}
 						/>
 					))}
+					{provided.placeholder}
+				</div>
+			)}
+		</Droppable>
 	);
 }
