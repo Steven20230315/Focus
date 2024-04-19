@@ -32,15 +32,8 @@ const projectSlice = createSlice({
 	name: 'project',
 	initialState,
 	reducers: {
-		addProject: (
-			state: ProjectState,
-			action: PayloadAction<AddProjectPayload>
-		) => {
-			const id = createID();
-			state.projects[id] = {
-				...action.payload,
-				projectId: id,
-			};
+		addProject: (state: ProjectState, action: PayloadAction<Project>) => {
+			state.projects[action.payload.projectId] = action.payload;
 		},
 		deleteProject: (state: ProjectState, action: PayloadAction<ProjectId>) => {
 			if (!(action.payload in state.projects)) {
