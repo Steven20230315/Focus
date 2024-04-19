@@ -6,6 +6,7 @@ import { DragDropContext } from '@hello-pangea/dnd';
 import { type DropResult } from '@hello-pangea/dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProjectOrder } from './features/projectDisplay/projectDisplaySlice';
+import { updateColumnOrder } from './features/columnDisplay/columnDisplaySlice';
 
 const Container = styled.div`
 	display: grid;
@@ -16,7 +17,7 @@ function App() {
 	const dispatch = useDispatch();
 	const onDragEnd = (result: DropResult) => {
 		const { destination, source, draggableId } = result;
-
+		console.log(source);
 		// Log only in development mode
 		console.log(process.env.NODE_ENV);
 		if (process.env.NODE_ENV === 'development') {
@@ -30,14 +31,20 @@ function App() {
 			console.log('Drag operation cancelled due to missing data.');
 			return;
 		}
-		console.log(draggableId);
+
 		if (destination && draggableId && source) {
-			dispatch(
-				updateProjectOrder({
-					...result,
-					projectId: draggableId,
-				})
-			);
+			if (source.droppableId === 'sidebar') {
+				dispatch(
+					updateProjectOrder({
+						...result,
+						projectId: draggableId,
+					})
+				);
+			}
+			if (source.droppableId === 'view') {
+				dispatch(updateColumnOrder(result));
+				// TODO
+			}
 		}
 		console.log('Update successfully');
 	};
