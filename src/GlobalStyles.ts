@@ -10,14 +10,27 @@ body{
   box-sizing: border-box;
 }
 
+:root{
+  --top-nav-height: 70px;
+}
+
 #root{
   display: flex;
-  justify-content: center;
   flex-direction: column;
   min-width: 1280px;
   width: 100vw;
   height: 100vh;
 }
+
+.container{
+  display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 0.5rem;
+	border: 1px solid black;
+  height: calc(100vh - var(--top-nav-height));
+}
+
 
 `;
 

@@ -1,9 +1,10 @@
-import React from 'react'
+import React from 'react';
+import styled from 'styled-components';
+
+const Container = styled.div`
+
+`;
 
 export default function View() {
-  return (
-    <div>
-      view
-    </div>
-  )
+	return <Container className='container'>view</Container>;
 }
