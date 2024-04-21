@@ -10,7 +10,7 @@ import {
 	type List,
 	type ColumnRole,
 } from '../../types';
-import { updateTasksOrderInColumn } from '../column/columnSlice';
+// import { updateTasksOrderInColumn } from '../column/columnSlice';
 import type { DropResult } from '@hello-pangea/dnd';
 import { setCurrentList } from '../list/listSlice';
 
