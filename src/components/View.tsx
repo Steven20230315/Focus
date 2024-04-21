@@ -23,12 +23,7 @@ export default function View() {
 	return (
 		<Container className='container'>
 			view
-			<h2>Project Title Go here</h2>
-			<form action=''>
-				<h3>Add new task component go here</h3>
-				<input type='text' />
-			</form>
-			<Droppable droppableId='view'>
+			<AddTask currentColumns={currentColumns} />
 				{(provided: DroppableProvided) => (
 					<div
 						className='display'
