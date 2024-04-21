@@ -1,8 +1,10 @@
 import styled from 'styled-components';
-import ColumnDisplay from '../features/columnDisplay/ColumnDisplay';
 import { Droppable, type DroppableProvided } from '@hello-pangea/dnd';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { type ColumnId } from '../types';
+import type { RootState } from '../store';
+import ColumnDisplay from '../features/column/ColumnDisplay';
+import AddTask from '../features/task/AddTask';
 
 const Container = styled.div`
 	display: flex;
@@ -15,24 +17,35 @@ const Container = styled.div`
 	}
 `;
 
-
 export default function View() {
-	const order = useSelector(
-		(state: RootState) => state.columnDisplay.columnDisplayOrder
+	const currentList = useSelector((state: RootState) => state.list.currentList);
+	const currentColumns = useSelector(
+		(state: RootState) => state.column.columnsInCurrentList
 	);
+	const currentColumnsOrder = useSelector(
+		(state: RootState) => state.column.columnIdsInCurrentList
+	);
+
 	return (
 		<Container className='container'>
 			view
+			<h2>{currentList.title}</h2>
 			<AddTask currentColumns={currentColumns} />
+			<Droppable droppableId='view' direction='horizontal' type='column'>
 				{(provided: DroppableProvided) => (
 					<div
 						className='display'
 						{...provided.droppableProps}
 						ref={provided.innerRef}
 					>
-						{order.map((role: string, index: number) => (
-							<ColumnDisplay key={role} title={role} index={index} />
+						{currentColumnsOrder.map((columnId: ColumnId, index: number) => (
+							<ColumnDisplay
+								key={columnId}
+								column={currentColumns[columnId]}
+								index={index}
+							/>
 						))}
+
 						{provided.placeholder}
 					</div>
 				)}

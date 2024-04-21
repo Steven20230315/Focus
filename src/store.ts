@@ -1,14 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import projectDisplaySlice from './features/projectDisplay/projectDisplaySlice';
-import projectSlice from './features/project/projectSlice';
+import listSlice from './features/list/listSlice';
 import columnSlice from './features/column/columnSlice';
-import columnDisplaySlice from './features/columnDisplay/columnDisplaySlice';
+import taskSlice from './features/task/taskSlice';
 export const store = configureStore({
 	reducer: {
-		projectDisplay: projectDisplaySlice,
-		project: projectSlice,
-		// column: columnSlice,
-		columnDisplay: columnDisplaySlice,
+		list: listSlice,
+		column: columnSlice,
+		task: taskSlice,
 	},
 });
 

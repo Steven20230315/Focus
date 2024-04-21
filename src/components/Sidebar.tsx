@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import ProjectList from '../features/projectDisplay/ProjectList';
-import AddNewProject from '../features/project/AddNewProject';
+import ProjectList from '../features/list/List';
+import AddNewProject from '../features/list/AddList';
 
 const Container = styled.div``;
 

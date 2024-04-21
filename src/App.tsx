@@ -5,8 +5,12 @@ import styled from 'styled-components';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { type DropResult } from '@hello-pangea/dnd';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateProjectOrder } from './features/projectDisplay/projectDisplaySlice';
-import { updateColumnOrder } from './features/columnDisplay/columnDisplaySlice';
+import { updateTasksOrderInColumn } from './features/column/columnSlice';
+import { updateListsOrder } from './features/list/listSlice';
+import {
+	taskMoveBetweenColumns,
+	taskMoveInColumn,
+} from './features/task/taskSlice';
 
 const Container = styled.div`
 	display: grid;
@@ -34,18 +38,26 @@ function App() {
 
 		if (destination && draggableId && source) {
 			if (source.droppableId === 'sidebar') {
+				console.log('Update sidebar');
 				dispatch(
-					updateProjectOrder({
+					updateListsOrder({
 						...result,
-						projectId: draggableId,
 					})
 				);
 			}
 			if (source.droppableId === 'view') {
-				dispatch(updateColumnOrder(result));
+				console.log('Update view');
+				dispatch(updateTasksOrderInColumn(result));
 				// TODO
+			} else if (source.droppableId === destination.droppableId) {
+				console.log('Movement in the same column');
+				dispatch(taskMoveInColumn(result));
+			} else {
+				console.log('Movement between columns');
+				dispatch(taskMoveBetweenColumns(result));
 			}
 		}
+		console.log(result);
 		console.log('Update successfully');
 	};
 
