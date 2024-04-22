@@ -5,7 +5,7 @@ import { type DropResult } from "@hello-pangea/dnd";
 interface ListsState {
   allLists: Record<ListId, List>;
   listsOrder: ListId[];
-  currentList: List;
+  currentListId: ListId;
 }
 
 // Initial state for projects
@@ -14,6 +14,12 @@ const initialState: ListsState = {
     "cad747f0-671f-4687-8a2a-a5499f3f65b8": {
       title: "List 1",
       listId: "cad747f0-671f-4687-8a2a-a5499f3f65b8",
+      columnIdsOrder: [
+        "68c83c43-5b6c-4ddd-8718-9504d724b19e",
+        "a0ef1554-c6d1-447a-8d6d-09a2e475e92d",
+        "3dbbb74b-9988-4c77-ad3d-90ed04a03894",
+        "dd02393d-82ac-4105-8ca6-e4fa282c2321",
+      ],
       columnIds: [
         "68c83c43-5b6c-4ddd-8718-9504d724b19e",
         "a0ef1554-c6d1-447a-8d6d-09a2e475e92d",
@@ -24,6 +30,12 @@ const initialState: ListsState = {
     "e8b1fb51-56fa-4f02-b2cf-3e7faa02e9a7": {
       title: "List 2",
       listId: "e8b1fb51-56fa-4f02-b2cf-3e7faa02e9a7",
+      columnIdsOrder: [
+        "3d95854c-c268-4941-85df-2132ceac0513",
+        "243473a7-7eb9-4e66-bd52-6d2a34214a8d",
+        "dd3e02e6-c386-4de7-b7e2-f3a72fee456f",
+        "5f4d1e8e-8e7e-4f6c-8f2d-0e4e9f9f9f9f",
+      ],
       columnIds: [
         "3d95854c-c268-4941-85df-2132ceac0513",
         "243473a7-7eb9-4e66-bd52-6d2a34214a8d",
@@ -34,6 +46,12 @@ const initialState: ListsState = {
     "6d80ab43-79fc-4914-82fc-eb7f0f8562ec": {
       title: "List 3",
       listId: "6d80ab43-79fc-4914-82fc-eb7f0f8562ec",
+      columnIdsOrder: [
+        "f00e6163-7972-4842-8b81-225061cb3ae8",
+        "c45d4737-4ced-46c7-ad2b-25e7b01fbd88",
+        "205a1c14-9ccd-44f5-9905-518c8e6a9250",
+        "ae08d0a3-5c97-4071-8e53-ad7995e0a336",
+      ],
       columnIds: [
         "f00e6163-7972-4842-8b81-225061cb3ae8",
         "c45d4737-4ced-46c7-ad2b-25e7b01fbd88",
@@ -47,16 +65,7 @@ const initialState: ListsState = {
     "e8b1fb51-56fa-4f02-b2cf-3e7faa02e9a7",
     "6d80ab43-79fc-4914-82fc-eb7f0f8562ec",
   ],
-  currentList: {
-    title: "List 1",
-    listId: "cad747f0-671f-4687-8a2a-a5499f3f65b8",
-    columnIds: [
-      "68c83c43-5b6c-4ddd-8718-9504d724b19e",
-      "a0ef1554-c6d1-447a-8d6d-09a2e475e92d",
-      "3dbbb74b-9988-4c77-ad3d-90ed04a03894",
-      "dd02393d-82ac-4105-8ca6-e4fa282c2321",
-    ],
-  },
+  currentListId: "cad747f0-671f-4687-8a2a-a5499f3f65b8",
 };
 
 const projectSlice = createSlice({
@@ -93,7 +102,7 @@ const projectSlice = createSlice({
     // TODO: Add more comment here. Below is code for managing how lists are displayed
     // ******************************************************************************************************
     setCurrentList: (state: ListsState, action: PayloadAction<List>) => {
-      state.currentList = action.payload;
+      state.currentListId = action.payload;
     },
     updateListsOrder: (
       state: ListsState,
@@ -135,18 +144,18 @@ const projectSlice = createSlice({
         );
       }
       // Check if the draggableId is in the columnIds of the sourceList
-      if (!state.allLists[sourceListId].columnIds.includes(draggableId)) {
+      if (!state.allLists[sourceListId].columnIdsOrder.includes(draggableId)) {
         throw new Error(
           "The draggableId is not a valid column id, it does not exist in allLists[sourceListId].columnIds. This should not happen",
         );
       }
 
       // Ready to update allLists
-      const [remove] = state.allLists[sourceListId].columnIds.splice(
+      const [remove] = state.allLists[sourceListId].columnIdsOrder.splice(
         source.index,
         1,
       );
-      state.allLists[sourceListId].columnIds.splice(
+      state.allLists[sourceListId].columnIdsOrder.splice(
         destination!.index,
         0,
         remove,
