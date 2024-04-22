@@ -1,11 +1,11 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { type DropResult } from "@hello-pangea/dnd";
 import { updateListsOrder } from "../features/list/listSlice";
-import {
-  taskMoveInColumn,
-  taskMoveBetweenColumns,
-} from "../features/task/taskSlice";
+import { updateTaskOwner } from "../features/column/columnSlice";
+import { updateTasksOrderInColumn } from "../features/column/columnSlice";
 import { updateColumnsOrderInList } from "../features/list/listSlice";
+import { selectCurrentColumnRole } from "../features/column/columnSelector";
+import type { ColumnId } from "../types";
 // Function to validate drag and drop results before dispatching. In development mode, it will throw an error.
 // NOTE: This function only check if draggableId is defined, It does not check whether draggableId exists in the state. This is done in the reducer.
 const validateDragResult = (result: DropResult) => {
@@ -25,19 +25,19 @@ const validateDragResult = (result: DropResult) => {
     }
   }
   if (!destination) {
-    if (process.env.NODE_ENV === "development") {
-      // Destination is undefined is not an error. Simply means the draggable item is dropped outside the droppable area. Do not throw an error.
-      console.log("destination is undefined");
-    } else {
-      return false;
-    }
+    console.log("destination is undefined");
+    return false;
+  } else if (!destination.droppableId) {
+    console.log("destination.droppableId is undefined");
+    return false;
   }
+
   return true;
 };
 
 export const useDragDrop = () => {
   const dispatch = useDispatch();
-
+  const currentColumnRole = useSelector(selectCurrentColumnRole);
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result;
 
@@ -53,11 +53,18 @@ export const useDragDrop = () => {
         dispatch(updateColumnsOrderInList(result));
       } else {
         console.debug("Update tasks order in the same column");
-        dispatch(taskMoveInColumn(result));
+        dispatch(updateTasksOrderInColumn(result));
       }
     } else {
       console.debug("Update which column the task is in");
-      dispatch(taskMoveBetweenColumns(result));
+
+      dispatch(
+        updateTaskOwner({
+          ...result,
+          oldRole: currentColumnRole[source.droppableId],
+          newRole: currentColumnRole[destination!.droppableId],
+        }),
+      );
     }
   };
 
