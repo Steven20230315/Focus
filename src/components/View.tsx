@@ -25,31 +25,7 @@ export default function View() {
   return (
     <Container className="container col-span-3 bg-stone-100">
       view
-      <h2>{currentList.title}</h2>
-      <AddTask currentColumns={columnsInCurrentList} />
-      <Droppable
-        droppableId={currentList.listId}
-        direction="horizontal"
-        type="column"
-      >
-        {(provided: DroppableProvided) => (
-          <div
-            className="display"
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            {columnsInCurrentList.map((column: Column, index: number) => (
-              <ColumnDisplay
-                key={column.columnId}
-                column={column}
-                index={index}
-              />
-            ))}
-
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
+      <ColumnList />
     </Container>
   );
 }
