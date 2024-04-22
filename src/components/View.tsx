@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { Droppable, type DroppableProvided } from "@hello-pangea/dnd";
 import { useSelector } from "react-redux";
-import { type ColumnId } from "../types";
-import type { RootState } from "../store";
+import { type Column } from "../types";
 import ColumnDisplay from "../features/column/ColumnDisplay";
-import AddTask from "../features/task/AddTask";
+import AddTask from "../features/task/CreateTask";
+import { getCurrentListAndColumns } from "../features/column/columnSelector";
 
 const Container = styled.div`
   display: flex;
@@ -18,19 +18,15 @@ const Container = styled.div`
 `;
 
 export default function View() {
-  const currentList = useSelector((state: RootState) => state.list.currentList);
-  const currentColumns = useSelector(
-    (state: RootState) => state.column.columnsInCurrentList,
-  );
-  const currentColumnsOrder = useSelector(
-    (state: RootState) => state.column.columnIdsInCurrentList,
+  const { currentList, columnsInCurrentList } = useSelector(
+    getCurrentListAndColumns,
   );
 
   return (
     <Container className="container col-span-3 bg-stone-100">
       view
       <h2>{currentList.title}</h2>
-      <AddTask currentColumns={currentColumns} />
+      <AddTask currentColumns={columnsInCurrentList} />
       <Droppable droppableId="view" direction="horizontal" type="column">
         {(provided: DroppableProvided) => (
           <div
@@ -38,10 +34,10 @@ export default function View() {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            {currentColumnsOrder.map((columnId: ColumnId, index: number) => (
+            {columnsInCurrentList.map((column: Column, index: number) => (
               <ColumnDisplay
-                key={columnId}
-                column={currentColumns[columnId]}
+                key={column.columnId}
+                column={column}
                 index={index}
               />
             ))}
