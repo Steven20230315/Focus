@@ -5,7 +5,6 @@ import { updateTaskOwner } from "../features/column/columnSlice";
 import { updateTasksOrderInColumn } from "../features/column/columnSlice";
 import { updateColumnsOrderInList } from "../features/list/listSlice";
 import { selectCurrentColumnRole } from "../features/column/columnSelector";
-import type { ColumnId } from "../types";
 // Function to validate drag and drop results before dispatching. In development mode, it will throw an error.
 // NOTE: This function only check if draggableId is defined, It does not check whether draggableId exists in the state. This is done in the reducer.
 const validateDragResult = (result: DropResult) => {

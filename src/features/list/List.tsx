@@ -11,7 +11,6 @@ import { getAllListTitlesAndIdsInOrder } from "../../features/list/listSelector"
 
 export default function ProjectList() {
   const listTitlesAndIdsInOrder = useSelector(getAllListTitlesAndIdsInOrder);
-  console.log("listTitlesAndIdsInOrder", listTitlesAndIdsInOrder);
   return (
     <Droppable droppableId="sidebar">
       {(provided: DroppableProvided) => (
@@ -20,15 +19,20 @@ export default function ProjectList() {
           {...provided.droppableProps}
           className="some-class-for-styling"
         >
-          {listTitlesAndIdsInOrder.map( ( list: {listId: List["listId"], listTitle: List["title"]}, index: number) => (
-            // Assuming Link component takes listId and listTitle as props
-            <Link
-              key={list.listId}
-              listId={list.listId!}
-              index={index}
-              listTitle={list.listTitle!}
-            />
-          ))}
+          {listTitlesAndIdsInOrder.map(
+            (
+              list: { listId: List["listId"]; listTitle: List["title"] },
+              index: number,
+            ) => (
+              // Assuming Link component takes listId and listTitle as props
+              <Link
+                key={list.listId}
+                listId={list.listId!}
+                index={index}
+                listTitle={list.listTitle!}
+              />
+            ),
+          )}
           {provided.placeholder}
         </div>
       )}

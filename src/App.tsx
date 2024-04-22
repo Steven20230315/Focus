@@ -3,10 +3,8 @@ import Sidebar from "./components/Sidebar";
 import View from "./components/View";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { useDragDrop } from "./hooks/useDragDrop";
-
 function App() {
   const onDragEnd = useDragDrop();
-
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="h-screen w-full bg-slate-200 ">

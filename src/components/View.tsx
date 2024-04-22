@@ -1,10 +1,8 @@
 import styled from "styled-components";
-import { Droppable, type DroppableProvided } from "@hello-pangea/dnd";
 import { useSelector } from "react-redux";
-import { type Column } from "../types";
-import ColumnDisplay from "../features/column/ColumnDisplay";
-import AddTask from "../features/task/CreateTask";
-import { getCurrentListAndColumns } from "../features/column/columnSelector";
+import CreateTask from "../features/task/CreateTask";
+import { getCurrentListIdAndTitle } from "../features/list/listSelector";
+import ColumnList from "../features/column/ColumnList";
 
 const Container = styled.div`
   display: flex;
@@ -18,13 +16,14 @@ const Container = styled.div`
 `;
 
 export default function View() {
-  const { currentList, columnsInCurrentList } = useSelector(
-    getCurrentListAndColumns,
-  );
-
+  // The view component only receives the list id and list title of the current list.
+  // Changes to the columnIds or columnIdsOrder of the current list will not cause a re-render
+  const { listTitle } = useSelector(getCurrentListIdAndTitle);
   return (
     <Container className="container col-span-3 bg-stone-100">
       view
+      <h2>{listTitle}</h2>
+      <CreateTask />
       <ColumnList />
     </Container>
   );

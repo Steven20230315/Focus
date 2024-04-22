@@ -1,13 +1,11 @@
 import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { type RootState } from "../../store";
 import {
   Draggable,
   type DraggableProvided,
   Droppable,
   type DroppableProvided,
 } from "@hello-pangea/dnd";
-import { type Column, type ColumnId } from "../../types";
+import { type Column } from "../../types";
 import TaskList from "../task/TaskList";
 const Container = styled.ul`
   display: flex;
@@ -35,7 +33,7 @@ export default function ColumnDisplay({ index, column }: ColumnDisplayProps) {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <h3 className=" px-4 py-2 text-center text-white  sm:px-8 ">
+          <h3 className=" px-4 py-2 text-center text-black  sm:px-8 ">
             {column.role}
           </h3>
           <p>{column.columnId}</p>
