@@ -12,7 +12,7 @@ const Container = styled.form`
 	border: 1px solid black;
 `;
 
-export default function AddList() {
+export default function CreateList() {
 	const dispatch = useDispatch();
 	const onSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

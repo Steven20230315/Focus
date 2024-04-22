@@ -1,25 +1,25 @@
-import LinkContainer from "../styles/LinkContainer";
 import { Draggable, type DraggableProvided } from "@hello-pangea/dnd";
 import { setCurrentList } from "../features/list/listSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { type RootState } from "../store";
-import { type List } from "../types";
+import { type List, type ListId } from "../types";
 type LinkProps = {
-  list: List;
+  listId: ListId;
   index: number;
+  listTitle: List["title"];
 };
 
-export default function Link({ list, index }: LinkProps) {
+export default function Link({ listId, index, listTitle }: LinkProps) {
   const dispatch = useDispatch();
   const onClick = () => {
-    dispatch(setCurrentList(list));
+    dispatch(setCurrentList(listId));
   };
   const currentListId = useSelector(
-    (state: RootState) => state.list.currentList.listId,
+    (state: RootState) => state.list.currentListId,
   );
 
   return (
-    <Draggable draggableId={list.listId} index={index}>
+    <Draggable draggableId={listId} index={index}>
       {(provided: DraggableProvided) => (
         // <LinkContainer
         <div
@@ -30,7 +30,7 @@ export default function Link({ list, index }: LinkProps) {
           onClick={onClick}
           className="gap-2 rounded-sm bg-violet-200 text-violet-900"
         >
-          {list.title} - {currentListId === list.listId ? "Active" : "Inactive"}
+          {listTitle} - {currentListId === listId ? "Active" : "Inactive"}
         </div>
         // </LinkContainer>
       )}
