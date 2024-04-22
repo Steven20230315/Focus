@@ -1,11 +1,13 @@
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { type RootState } from "../../store";
 import {
   Draggable,
   type DraggableProvided,
   Droppable,
   type DroppableProvided,
 } from "@hello-pangea/dnd";
-import {  type Column } from "../../types";
+import { type Column, type ColumnId } from "../../types";
 import TaskList from "../task/TaskList";
 const Container = styled.ul`
   display: flex;
@@ -21,6 +23,7 @@ const Container = styled.ul`
 type ColumnDisplayProps = {
   index: number;
   column: Column;
+  // columnId: ColumnId;
 };
 
 export default function ColumnDisplay({ index, column }: ColumnDisplayProps) {
