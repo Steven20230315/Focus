@@ -15,7 +15,7 @@ import {
 import { addListWithDefaultColumns, deleteList } from "../list/listSlice";
 import { addTask, deleteTask } from "../task/taskSlice";
 import { columnSliceInitialState } from "./columnData";
-import type { DropResult, DraggableLocation } from "@hello-pangea/dnd";
+import type { DropResult } from "@hello-pangea/dnd";
 
 export interface updateColumnPayload {
   columnId: ColumnId;

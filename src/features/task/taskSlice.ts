@@ -9,7 +9,6 @@ import {
   type ColumnId,
   type ColumnRole,
 } from "../../types";
-import type { DropResult } from "@hello-pangea/dnd";
 import { updateTaskOwner } from "../column/columnSlice";
 import { DropResultWithRole } from "../column/columnSlice";
 // TODO: This is only a temporary type definition. For testing purposes.
