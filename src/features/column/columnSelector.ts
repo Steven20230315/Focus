@@ -1,20 +1,21 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
-import type { Column, ColumnId, List } from "../../types";
-
-export const selectCurrentList = (state: RootState) => state.list.currentList;
+import type { Column, ColumnId, List, ListId } from "../../types";
+import { selectCurrentListId } from "../list/listSelector";
+import { selectAllLists } from "../list/listSelector";
 
 export const selectAllColumns = (state: RootState) => state.column.allColumns;
 
-export const getCurrentListAndColumns = createSelector(
-  [selectCurrentList, selectAllColumns],
-  (currentList: List, allColumns: Record<ColumnId, Column>) => {
-    const columnsInCurrentList = currentList.columnIds.map(
-      (columnId: string) => allColumns[columnId] as Column,
-    );
-    return {
-      currentList: currentList,
-      columnsInCurrentList: columnsInCurrentList,
-    };
+export const selectColumnsInOriginalOrder = createSelector(
+  [selectAllLists, selectCurrentListId, selectAllColumns],
+  (
+    allLists: Record<ListId, List>,
+    currentListId: ListId,
+    allColumns: Record<ColumnId, Column>,
+  ) => {
+    const originalColumnsOrder = allLists[currentListId].columnIds;
+    return originalColumnsOrder.map((columnId: ColumnId) => {
+      return allColumns[columnId];
+    });
   },
 );

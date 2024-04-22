@@ -8,12 +8,13 @@ import { type FormEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch } from "react-redux";
 import { addTask } from "./taskSlice";
-type AddNewTaskProps = {
-  currentColumns: Column[];
-};
+import { selectColumnsInOriginalOrder } from "../column/columnSelector";
 
-export default function AddTask({ currentColumns }: AddNewTaskProps) {
+import { useSelector } from "react-redux";
+
+export default function CreateTask() {
   const dispatch = useDispatch();
+  const currentColumns = useSelector(selectColumnsInOriginalOrder);
   const handleAddTask = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
