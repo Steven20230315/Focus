@@ -101,7 +101,7 @@ const projectSlice = createSlice({
     // ******************************************************************************************************
     // TODO: Add more comment here. Below is code for managing how lists are displayed
     // ******************************************************************************************************
-    setCurrentList: (state: ListsState, action: PayloadAction<List>) => {
+    setCurrentList: (state: ListsState, action: PayloadAction<ListId>) => {
       state.currentListId = action.payload;
     },
     updateListsOrder: (
