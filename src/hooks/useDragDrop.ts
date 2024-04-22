@@ -1,12 +1,13 @@
 import { useDispatch } from "react-redux";
 import { type DropResult } from "@hello-pangea/dnd";
 import { updateListsOrder } from "../features/list/listSlice";
-import { updateCurrentColumnsOrder } from "../features/column/columnSlice";
 import {
   taskMoveInColumn,
   taskMoveBetweenColumns,
 } from "../features/task/taskSlice";
+import { updateColumnsOrderInList } from "../features/list/listSlice";
 // Function to validate drag and drop results before dispatching. In development mode, it will throw an error.
+// NOTE: This function only check if draggableId is defined, It does not check whether draggableId exists in the state. This is done in the reducer.
 const validateDragResult = (result: DropResult) => {
   const { destination, source, draggableId } = result;
   if (!draggableId) {
@@ -39,27 +40,22 @@ export const useDragDrop = () => {
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result;
+
     if (!validateDragResult(result)) return;
 
     // result is validated. destination can not be undefined.
     if (source.droppableId === destination!.droppableId) {
-      // Handles reordering of lists in sidebar, columns in view, or tasks in the same column
-      switch (source.droppableId) {
-        case "sidebar":
-          console.debug("Update list order in sidebar");
-          dispatch(updateListsOrder(result));
-          break;
-        case "view":
-          console.debug("Update columns order in view");
-          dispatch(updateCurrentColumnsOrder(result));
-          break;
-        default:
-          console.debug("Update tasks order in the same column");
-          dispatch(taskMoveInColumn(result));
-          break;
+      if (source.droppableId === "sidebar") {
+        console.debug("Update list order in sidebar");
+        dispatch(updateListsOrder(result));
+      } else if (result.type === "column") {
+        console.debug("Update column order in view");
+        dispatch(updateColumnsOrderInList(result));
+      } else {
+        console.debug("Update tasks order in the same column");
+        dispatch(taskMoveInColumn(result));
       }
     } else {
-      // Not just reordering, but change ownership of a task
       console.debug("Update which column the task is in");
       dispatch(taskMoveBetweenColumns(result));
     }

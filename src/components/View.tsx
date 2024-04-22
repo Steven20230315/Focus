@@ -27,7 +27,11 @@ export default function View() {
       view
       <h2>{currentList.title}</h2>
       <AddTask currentColumns={columnsInCurrentList} />
-      <Droppable droppableId="view" direction="horizontal" type="column">
+      <Droppable
+        droppableId={currentList.listId}
+        direction="horizontal"
+        type="column"
+      >
         {(provided: DroppableProvided) => (
           <div
             className="display"
