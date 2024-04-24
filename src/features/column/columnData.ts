@@ -77,37 +77,4 @@ export const columnSliceInitialState: ColumnState = {
       listId: '6d80ab43-79fc-4914-82fc-eb7f0f8562ec',
     },
   },
-  columnsInCurrentList: {
-    '68c83c43-5b6c-4ddd-8718-9504d724b19e': {
-      columnId: '68c83c43-5b6c-4ddd-8718-9504d724b19e',
-      role: 'To Do',
-      taskIds: [],
-      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
-    },
-    'a0ef1554-c6d1-447a-8d6d-09a2e475e92d': {
-      columnId: 'a0ef1554-c6d1-447a-8d6d-09a2e475e92d',
-      role: 'In Progress',
-      taskIds: [],
-      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
-    },
-    '3dbbb74b-9988-4c77-ad3d-90ed04a03894': {
-      columnId: '3dbbb74b-9988-4c77-ad3d-90ed04a03894',
-      role: 'Done',
-      taskIds: [],
-      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
-    },
-    'dd02393d-82ac-4105-8ca6-e4fa282c2321': {
-      columnId: 'dd02393d-82ac-4105-8ca6-e4fa282c2321',
-      role: 'Pending',
-      taskIds: [],
-      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
-    },
-  },
-
-  columnIdsInCurrentList: [
-    '68c83c43-5b6c-4ddd-8718-9504d724b19e',
-    'a0ef1554-c6d1-447a-8d6d-09a2e475e92d',
-    '3dbbb74b-9988-4c77-ad3d-90ed04a03894',
-    'dd02393d-82ac-4105-8ca6-e4fa282c2321',
-  ],
 };

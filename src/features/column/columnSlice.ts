@@ -49,35 +49,6 @@ const columnSlice = createSlice({
       const currentColumn = state.allColumns[columnId];
       currentColumn.taskIds.push(taskId);
     },
-    updateCurrentColumnsOrder(
-      state: ColumnState,
-      action: PayloadAction<DropResult>,
-    ) {
-      const { source, destination, draggableId } =
-        action.payload;
-      if (!(draggableId in state.allColumns)) {
-        throw new Error(
-          'The column you want to move does not exist',
-        );
-      }
-      if (!destination) {
-        console.log('No destination');
-        return;
-      }
-      if (source.droppableId !== destination.droppableId) {
-        console.log('Column only has one droppable area');
-      }
-      if (source.droppableId === destination.droppableId) {
-        const oldIndex = source.index;
-        const newIndex = destination.index;
-        state.columnIdsInCurrentList.splice(oldIndex, 1);
-        state.columnIdsInCurrentList.splice(
-          newIndex,
-          0,
-          draggableId,
-        );
-      }
-    },
     updateTasksOrderInColumn(
       state: ColumnState,
       action: PayloadAction<DropResult>,
@@ -201,12 +172,9 @@ const columnSlice = createSlice({
           action: PayloadAction<Task>,
         ) => {
           const { columnId, taskId } = action.payload;
-          const addTaskIdToThisColumn =
-            state.allColumns[columnId];
-          addTaskIdToThisColumn.taskIds.push(taskId);
-          state.columnsInCurrentList[columnId].taskIds.push(
-            taskId,
-          );
+          console.log('Task added:', taskId);
+          console.log('Column ID:', columnId);
+          state.allColumns[columnId].taskIds.push(taskId);
         },
       )
       .addCase(
@@ -224,14 +192,6 @@ const columnSlice = createSlice({
             ),
             1,
           );
-          state.columnsInCurrentList[
-            columnId
-          ].taskIds.splice(
-            state.columnsInCurrentList[
-              columnId
-            ].taskIds.indexOf(taskId),
-            1,
-          );
           console.log('Task deleted:', taskId);
         },
       );
@@ -241,7 +201,6 @@ const columnSlice = createSlice({
 export const {
   addColumns,
   updateColumn,
-  updateCurrentColumnsOrder,
   updateTasksOrderInColumn,
   updateTaskOwner,
 } = columnSlice.actions;
