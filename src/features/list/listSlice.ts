@@ -9,6 +9,7 @@ interface ListsState {
   allLists: Record<ListId, List>;
   listsOrder: ListId[];
   currentListId: ListId;
+  isSidebarOpen: boolean;
 }
 
 // Initial state for projects
@@ -69,6 +70,7 @@ const initialState: ListsState = {
     '6d80ab43-79fc-4914-82fc-eb7f0f8562ec',
   ],
   currentListId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
+  isSidebarOpen: true,
 };
 
 const projectSlice = createSlice({
@@ -187,6 +189,9 @@ const projectSlice = createSlice({
         remove,
       );
     },
+    toggleSidebar: (state: ListsState) => {
+      state.isSidebarOpen = !state.isSidebarOpen;
+    },
   },
 });
 
@@ -197,5 +202,6 @@ export const {
   setCurrentList,
   updateListsOrder,
   updateColumnsOrderInList,
+  toggleSidebar,
 } = projectSlice.actions;
 export default projectSlice.reducer;
