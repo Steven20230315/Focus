@@ -1,22 +1,11 @@
-import styled from "styled-components";
 import {
   Draggable,
   type DraggableProvided,
   Droppable,
   type DroppableProvided,
-} from "@hello-pangea/dnd";
-import { type Column } from "../../types";
-import TaskList from "../task/TaskList";
-const Container = styled.ul`
-  display: flex;
-  flex-direction: column;
-  border: 1px solid black;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  margin: 0.5rem;
-  text-align: center;
-  min-height: 200px;
-`;
+} from '@hello-pangea/dnd';
+import { type Column } from '../../types';
+import TaskList from '../task/TaskList';
 
 type ColumnDisplayProps = {
   index: number;
@@ -24,19 +13,22 @@ type ColumnDisplayProps = {
   // columnId: ColumnId;
 };
 
-export default function ColumnDisplay({ index, column }: ColumnDisplayProps) {
+export default function ColumnDisplay({
+  index,
+  column,
+}: ColumnDisplayProps) {
   return (
     <Draggable draggableId={column.columnId} index={index}>
       {(provided: DraggableProvided) => (
-        <Container
+        <div
+          className="min-h-[350px] rounded-xl bg-black p-3 text-black shadow-lg shadow-slate-900 hover:bg-slate-400 hover:text-slate-200"
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <h3 className=" px-4 py-2 text-center text-black  sm:px-8 ">
+          <h3 className=" px-4 py-2 text-center text-2xl font-bold text-white/90 sm:px-8 ">
             {column.role}
           </h3>
-          <p>{column.columnId}</p>
           <Droppable droppableId={column.columnId}>
             {(provided: DroppableProvided) => (
               <TaskList
@@ -48,7 +40,7 @@ export default function ColumnDisplay({ index, column }: ColumnDisplayProps) {
               </TaskList>
             )}
           </Droppable>
-        </Container>
+        </div>
       )}
     </Draggable>
   );

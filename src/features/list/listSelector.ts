@@ -1,11 +1,12 @@
-import { createSelector } from "@reduxjs/toolkit";
-import { RootState } from "../../store";
-import type { List, ListId } from "../../types";
+import { createSelector } from '@reduxjs/toolkit';
+import { RootState } from '../../store';
+import type { List, ListId } from '../../types';
 
 export const selectCurrentListId = (state: RootState) =>
   state.list.currentListId;
 
-export const selectAllLists = (state: RootState) => state.list.allLists;
+export const selectAllLists = (state: RootState) =>
+  state.list.allLists;
 
 export const selectAllListIDsInOrder = (state: RootState) =>
   state.list.listsOrder;
@@ -15,7 +16,10 @@ export const currentListDetails = (state: RootState) =>
 
 export const getCurrentListDetails = createSelector(
   [selectAllLists, selectCurrentListId],
-  (allList: Record<ListId, List>, currentListId: ListId) => {
+  (
+    allList: Record<ListId, List>,
+    currentListId: ListId,
+  ) => {
     return {
       listTitle: allList[currentListId].title,
       listId: allList[currentListId].listId,
@@ -25,7 +29,10 @@ export const getCurrentListDetails = createSelector(
 
 export const getCurrentListIdAndTitle = createSelector(
   [selectAllLists, selectCurrentListId],
-  (allList: Record<ListId, List>, currentListId: ListId) => {
+  (
+    allList: Record<ListId, List>,
+    currentListId: ListId,
+  ) => {
     // This will be reevaluated when allList or currentListId changes
 
     return {

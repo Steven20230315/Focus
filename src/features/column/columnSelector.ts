@@ -1,10 +1,17 @@
-import { createSelector } from "@reduxjs/toolkit";
-import { RootState } from "../../store";
-import type { Column, ColumnId, List, ListId, ColumnRole } from "../../types";
-import { selectCurrentListId } from "../list/listSelector";
-import { selectAllLists } from "../list/listSelector";
+import { createSelector } from '@reduxjs/toolkit';
+import { RootState } from '../../store';
+import type {
+  Column,
+  ColumnId,
+  List,
+  ListId,
+  ColumnRole,
+} from '../../types';
+import { selectCurrentListId } from '../list/listSelector';
+import { selectAllLists } from '../list/listSelector';
 
-export const selectAllColumns = (state: RootState) => state.column.allColumns;
+export const selectAllColumns = (state: RootState) =>
+  state.column.allColumns;
 
 export const selectColumnsInUpdatedOrder = createSelector(
   [selectAllLists, selectCurrentListId, selectAllColumns],
@@ -13,7 +20,8 @@ export const selectColumnsInUpdatedOrder = createSelector(
     currentListId: ListId,
     allColumns: Record<ColumnId, Column>,
   ) => {
-    const updatedColumnsOrder = allLists[currentListId].columnIdsOrder;
+    const updatedColumnsOrder =
+      allLists[currentListId].columnIdsOrder;
     return updatedColumnsOrder.map((columnId: ColumnId) => {
       return allColumns[columnId];
     });
@@ -27,10 +35,13 @@ export const selectColumnsInOriginalOrder = createSelector(
     currentListId: ListId,
     allColumns: Record<ColumnId, Column>,
   ) => {
-    const originalColumnsOrder = allLists[currentListId].columnIds;
-    return originalColumnsOrder.map((columnId: ColumnId) => {
-      return allColumns[columnId];
-    });
+    const originalColumnsOrder =
+      allLists[currentListId].columnIds;
+    return originalColumnsOrder.map(
+      (columnId: ColumnId) => {
+        return allColumns[columnId];
+      },
+    );
   },
 );
 
@@ -41,9 +52,13 @@ export const selectCurrentColumnRole = createSelector(
     currentListId: ListId,
     allColumns: Record<ColumnId, Column>,
   ) => {
-    const currentColumnIds = allList[currentListId].columnIds;
+    const currentColumnIds =
+      allList[currentListId].columnIds;
     return currentColumnIds.reduce(
-      (acc: Record<ColumnId, ColumnRole>, columnId: ColumnId) => {
+      (
+        acc: Record<ColumnId, ColumnRole>,
+        columnId: ColumnId,
+      ) => {
         acc[columnId] = allColumns[columnId].role;
         return acc;
       },

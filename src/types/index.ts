@@ -1,3 +1,3 @@
 export * from './listTypes';
 export * from './columnTypes';
-export * from './taskTypes'
+export * from './taskTypes';
