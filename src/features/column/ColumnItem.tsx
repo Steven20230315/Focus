@@ -1,45 +1,53 @@
-import {
-  Draggable,
-  type DraggableProvided,
-  Droppable,
-  type DroppableProvided,
-} from '@hello-pangea/dnd';
+import { Draggable, type DraggableProvided, Droppable, type DroppableProvided } from '@hello-pangea/dnd';
 import { type Column } from '../../types';
 import TaskList from '../task/TaskList';
-
-type ColumnDisplayProps = {
+import { Disclosure, Transition } from '@headlessui/react';
+type ColumnItemProps = {
   index: number;
   column: Column;
   // columnId: ColumnId;
 };
+import { BsCaretRightFill } from 'react-icons/bs';
 
-export default function ColumnDisplay({
-  index,
-  column,
-}: ColumnDisplayProps) {
+export default function ColumnItem({ index, column }: ColumnItemProps) {
   return (
     <Draggable draggableId={column.columnId} index={index}>
       {(provided: DraggableProvided) => (
         <div
-          className="min-h-[350px] rounded-xl bg-black p-3 text-black shadow-lg shadow-slate-900 hover:bg-slate-400 hover:text-slate-200"
+          className="rounded-xl bg-stone-400/90 p-3 text-gray-800/90 shadow-sm shadow-black hover:bg-stone-500/90 hover:text-black "
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <h3 className=" px-4 py-2 text-center text-2xl font-bold text-white/90 sm:px-8 ">
-            {column.role}
-          </h3>
-          <Droppable droppableId={column.columnId}>
-            {(provided: DroppableProvided) => (
-              <TaskList
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                columnId={column.columnId}
-              >
-                {provided.placeholder}
-              </TaskList>
+          <Disclosure>
+            {({ open }) => (
+              <>
+                <Disclosure.Button className="flex items-center justify-center">
+                  <BsCaretRightFill className={open ? 'rotate-90 transform' : ''} />
+                  <h3 className=" px-4 py-2 text-center text-2xl font-bold  sm:px-8 ">{column.role}</h3>
+                </Disclosure.Button>
+
+                <Transition
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform scale-95 opacity-0"
+                  enterTo="transform scale-100 opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform scale-100 opacity-100"
+                  leaveTo="transform scale-95 opacity-0"
+                >
+                  <Disclosure.Panel className="flex flex-col gap-5">
+                    <Droppable droppableId={column.columnId}>
+                      {(provided: DroppableProvided) => (
+                        <TaskList ref={provided.innerRef} {...provided.droppableProps} columnId={column.columnId}>
+                          {provided.placeholder}
+                        </TaskList>
+                      )}
+                    </Droppable>
+                  </Disclosure.Panel>
+                </Transition>
+              </>
             )}
-          </Droppable>
+          </Disclosure>
         </div>
       )}
     </Draggable>
