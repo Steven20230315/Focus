@@ -8,15 +8,16 @@ import { FiPlusCircle } from 'react-icons/fi';
 
 type TaskListProps = React.HTMLAttributes<HTMLDivElement> & {
   columnId: ColumnId;
-  children?: React.ReactNode;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 };
 
-export default function TaskList({ columnId }: TaskListProps) {
+export default function TaskList({ columnId, onMouseEnter, onMouseLeave }: TaskListProps) {
   const tasksInColumn = useSelector((state: RootState) => state.column.allColumns[columnId].taskIds);
 
   return (
     <>
-      <div className="divide-y-2 ">
+      <div className="divide-y-2" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         <div className=" grid grid-cols-12 gap-4 py-2 text-start text-lg font-bold">
           <div className="col-span-5">name</div>
           <div className="col-span-7 col-start-6 grid grid-cols-6 place-items-center gap-6 text-center">
@@ -33,7 +34,7 @@ export default function TaskList({ columnId }: TaskListProps) {
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="mb-3 flex flex-col justify-center  divide-y"
+              className="mb-3 flex flex-col justify-center divide-y"
             >
               {tasksInColumn.map((taskId: TaskId, index: number) => (
                 <TaskItem key={taskId} taskId={taskId} index={index} />
