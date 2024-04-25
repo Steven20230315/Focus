@@ -35,14 +35,7 @@ export default function ColumnItem({ index, column }: ColumnItemProps) {
                   leaveFrom="transform scale-100 opacity-100"
                   leaveTo="transform scale-95 opacity-0"
                 >
-                  <Disclosure.Panel className="flex flex-col gap-5">
-                    <Droppable droppableId={column.columnId}>
-                      {(provided: DroppableProvided) => (
-                        <TaskList ref={provided.innerRef} {...provided.droppableProps} columnId={column.columnId}>
-                          {provided.placeholder}
-                        </TaskList>
-                      )}
-                    </Droppable>
+                    <TaskList columnId={column.columnId} />
                   </Disclosure.Panel>
                 </Transition>
               </>
