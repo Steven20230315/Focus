@@ -2,11 +2,7 @@ import { type ListId, type TaskId, type Task } from './';
 
 export type ColumnId = string;
 
-export type ColumnRole =
-  | 'To Do'
-  | 'In Progress'
-  | 'Done'
-  | 'Pending';
+export type ColumnRole = 'To Do' | 'In Progress' | 'Done' | 'Pending';
 
 export interface Column {
   columnId: ColumnId;

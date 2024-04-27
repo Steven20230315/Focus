@@ -1,14 +1,5 @@
-import {
-  createSlice,
-  type PayloadAction,
-  type ActionReducerMapBuilder,
-} from '@reduxjs/toolkit';
-import {
-  type TaskId,
-  type Task,
-  type ColumnId,
-  type ColumnRole,
-} from '../../types';
+import { createSlice, type PayloadAction, type ActionReducerMapBuilder } from '@reduxjs/toolkit';
+import { type TaskId, type Task, type ColumnId, type ColumnRole } from '../../types';
 import { updateTaskOwner } from '../column/columnSlice';
 import { DropResultWithRole } from '../column/columnSlice';
 // TODO: This is only a temporary type definition. For testing purposes.
@@ -38,10 +29,7 @@ const taskSlice = createSlice({
   name: 'task',
   initialState,
   reducers: {
-    addTask: (
-      state: TaskState,
-      action: PayloadAction<Task>,
-    ) => {
+    addTask: (state: TaskState, action: PayloadAction<Task>) => {
       const { columnId, taskId } = action.payload;
       state.allTasks[taskId] = action.payload;
       state.tasksInCurrentList[taskId] = action.payload;
@@ -55,60 +43,33 @@ const taskSlice = createSlice({
       // How to update tasks order in column?
       console.log('Task added:', action.payload);
     },
-    deleteTask: (
-      state: TaskState,
-      action: PayloadAction<Task>,
-    ) => {
+    deleteTask: (state: TaskState, action: PayloadAction<Task>) => {
       if (!(action.payload.taskId in state.allTasks)) {
-        throw new Error(
-          'The task you want to delete does not exist',
-        );
+        throw new Error('The task you want to delete does not exist');
       } else {
         delete state.allTasks[action.payload.taskId];
-        delete state.tasksInCurrentList[
-          action.payload.taskId
-        ];
+        delete state.tasksInCurrentList[action.payload.taskId];
       }
     },
-    updateTask: (
-      state: TaskState,
-      action: PayloadAction<Task>,
-    ) => {
+    // TODO: Make a type that is partial of task instead of task id
+    updateTask: (state: TaskState, action: PayloadAction<Partial<Task> & { taskId: TaskId }>) => {
       if (!(action.payload.taskId in state.allTasks)) {
-        throw new Error(
-          'The task you want to update does not exist',
-        );
+        throw new Error('The task you want to update does not exist');
       } else {
-        state.allTasks[action.payload.taskId] =
-          action.payload;
+        console.log("I'll think about it later");
       }
     },
   },
-  extraReducers: (
-    builder: ActionReducerMapBuilder<TaskState>,
-  ) => {
-    builder.addCase(
-      updateTaskOwner,
-      (
-        state: TaskState,
-        action: PayloadAction<DropResultWithRole>,
-      ) => {
-        const {
-          destination,
-          draggableId,
-          oldRole,
-          newRole,
-        } = action.payload;
-        console.log(`Task old status: ${oldRole}`);
-        console.log(`Task new status: ${newRole}`);
-        state.allTasks[draggableId].columnId =
-          destination!.droppableId;
-        state.allTasks[draggableId].status = newRole;
-      },
-    );
+  extraReducers: (builder: ActionReducerMapBuilder<TaskState>) => {
+    builder.addCase(updateTaskOwner, (state: TaskState, action: PayloadAction<DropResultWithRole>) => {
+      const { destination, draggableId, oldRole, newRole } = action.payload;
+      console.log(`Task old status: ${oldRole}`);
+      console.log(`Task new status: ${newRole}`);
+      state.allTasks[draggableId].columnId = destination!.droppableId;
+      state.allTasks[draggableId].status = newRole;
+    });
   },
 });
 
-export const { addTask, deleteTask, updateTask } =
-  taskSlice.actions;
+export const { addTask, deleteTask, updateTask } = taskSlice.actions;
 export default taskSlice.reducer;

@@ -1,8 +1,4 @@
-import {
-  type ListId,
-  type ColumnId,
-  type ColumnRole,
-} from './';
+import { type ListId, type ColumnId, type ColumnRole } from './';
 export type TaskId = string;
 
 export type TaskStatus = ColumnRole;

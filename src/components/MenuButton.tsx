@@ -5,9 +5,7 @@ type MenuButtonProps = {
   children?: React.ReactNode;
 };
 
-export default function MenuButton({
-  children,
-}: MenuButtonProps) {
+export default function MenuButton({ children }: MenuButtonProps) {
   return (
     <Menu.Button
       className={
