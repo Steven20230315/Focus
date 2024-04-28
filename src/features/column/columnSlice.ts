@@ -9,7 +9,7 @@ import {
   type Task,
 } from '../../types';
 import { addListWithDefaultColumns, deleteList } from '../list/listSlice';
-import { addTask, deleteTask } from '../task/taskSlice';
+import { addTask, deleteTask, type DeleteTaskPayload } from '../task/taskSlice';
 import { columnSliceInitialState } from './columnData';
 import type { DropResult } from '@hello-pangea/dnd';
 
@@ -104,7 +104,7 @@ const columnSlice = createSlice({
         console.log('Column ID:', columnId);
         state.allColumns[columnId].taskIds.push(taskId);
       })
-      .addCase(deleteTask, (state: ColumnState, action: PayloadAction<Task>) => {
+      .addCase(deleteTask, (state: ColumnState, action: PayloadAction<DeleteTaskPayload>) => {
         const { columnId, taskId } = action.payload;
         const deleteTaskIdFromThisColumn = state.allColumns[columnId];
         deleteTaskIdFromThisColumn.taskIds.splice(deleteTaskIdFromThisColumn.taskIds.indexOf(taskId), 1);

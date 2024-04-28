@@ -12,6 +12,11 @@ interface TaskState {
   columnIdAndRole: Record<ColumnId, ColumnRole>;
 }
 
+export type DeleteTaskPayload = {
+  columnId: ColumnId;
+  taskId: TaskId;
+};
+
 const initialState: TaskState = {
   allTasks: {},
   tasksInCurrentList: {},
@@ -43,7 +48,7 @@ const taskSlice = createSlice({
       // How to update tasks order in column?
       console.log('Task added:', action.payload);
     },
-    deleteTask: (state: TaskState, action: PayloadAction<Task>) => {
+    deleteTask: (state: TaskState, action: PayloadAction<DeleteTaskPayload>) => {
       if (!(action.payload.taskId in state.allTasks)) {
         throw new Error('The task you want to delete does not exist');
       } else {
