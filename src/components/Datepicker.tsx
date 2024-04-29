@@ -17,7 +17,11 @@ import {
 } from 'date-fns';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
-export default function Datepicker() {
+type DatePickerProps = {
+  onDateSelect?: (date: Date) => void;
+};
+
+export default function Datepicker({ onDateSelect }: DatePickerProps) {
   const today = startOfDay(new Date());
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   // State to control the open status of the menu
@@ -34,7 +38,8 @@ export default function Datepicker() {
   // A helper function to compute the class name for the day button
   function getDayButtonClass(day: Date, selectedDay: Date | null, today: Date, active: boolean) {
     // The base class for every day button
-    const baseClass = 'mx-auto flex h-6 w-6 items-center justify-center rounded-full';
+    const baseClass =
+      'mx-auto flex h-6 w-6 items-center justify-center rounded-full hover:bg-gray-100 hover:shadow-sm hover:text-slate-700';
     let classNames = baseClass;
 
     // If user selected a day, check if the day is the same as the selected day
@@ -81,6 +86,13 @@ export default function Datepicker() {
     setCurrentMonth(format(firstDayPrevMonth, 'MMM-yyyy'));
   }
 
+  const handleDateSelect = (day: Date) => {
+    setSelectedDay(day);
+    if (onDateSelect) {
+      onDateSelect(day);
+    }
+  };
+
   return (
     <Menu as="div" className="relative">
       {({ open }) => (
@@ -110,7 +122,7 @@ export default function Datepicker() {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Menu.Items className="absolute -right-28 mt-2 w-60 rounded-md bg-sky-600 px-4 py-2">
+            <Menu.Items className="absolute -right-28 mt-2 w-60 rounded-md bg-slate-400 px-4 py-2">
               <div className="flex items-center">
                 <h2 className="flex-auto text-sm font-semibold text-gray-900">
                   {format(firstDayCurrentMonth, 'MMMM yyyy')}
@@ -120,7 +132,7 @@ export default function Datepicker() {
                     <button
                       type="button"
                       onClick={prevMonth}
-                      className={`-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 ${active ? 'text-gray-500' : 'text-gray-400'}`}
+                      className={`-my-1.5 flex flex-none items-center justify-center rounded-md p-1.5 text-gray-200 hover:text-gray-50 hover:opacity-80 hover:shadow ${active ? 'text-gray-500' : 'text-gray-400'}`}
                     >
                       <span className="sr-only">Previous month</span>
                       <FiChevronLeft className="h-5 w-5" aria-hidden="true" />
@@ -132,7 +144,7 @@ export default function Datepicker() {
                     <button
                       type="button"
                       onClick={nextMonth}
-                      className={`-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 ${active ? 'text-gray-500' : 'text-gray-400'}`}
+                      className={`-my-1.5 flex flex-none items-center justify-center rounded-md p-1.5  text-gray-200 hover:text-gray-50 hover:shadow ${active ? 'text-gray-500' : 'text-gray-400'}`}
                     >
                       <span className="sr-only">Previous month</span>
                       <FiChevronRight className="h-5 w-5" aria-hidden="true" />
@@ -158,7 +170,7 @@ export default function Datepicker() {
                       {({ active }) => (
                         <button
                           type="button"
-                          onClick={() => setSelectedDay(day)}
+                          onClick={() => handleDateSelect(day)}
                           className={getDayButtonClass(day, selectedDay, today, active)}
                         >
                           <time dateTime={format(day, 'yyyy-MM-dd')}>{format(day, 'd')}</time>
