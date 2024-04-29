@@ -43,6 +43,7 @@ export const getAllListTitlesAndIdsInOrder = createSelector(
     });
   },
 );
+
 export const selectCurrentListDetails = createSelector(
   [selectAllLists, selectCurrentListId],
   (allList: Record<ListId, List>, currentListId: ListId) => {
@@ -54,3 +55,7 @@ export const selectCurrentListDetails = createSelector(
     return list;
   },
 );
+
+export const selectAllListTitles = createSelector(selectAllLists, (allList: Record<ListId, List>) => {
+  return Object.values(allList).map((list: List) => list.title);
+});
