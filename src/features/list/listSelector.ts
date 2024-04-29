@@ -43,3 +43,14 @@ export const getAllListTitlesAndIdsInOrder = createSelector(
     });
   },
 );
+export const selectCurrentListDetails = createSelector(
+  [selectAllLists, selectCurrentListId],
+  (allList: Record<ListId, List>, currentListId: ListId) => {
+    // Check if the current list ID exists in the allLists record
+    const list = allList[currentListId];
+    if (!list) {
+      return { title: null }; // or any other fallback object structure that fits your app
+    }
+    return list;
+  },
+);
