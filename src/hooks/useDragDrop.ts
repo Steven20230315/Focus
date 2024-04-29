@@ -36,9 +36,7 @@ const validateDragResult = (result: DropResult) => {
 
 export const useDragDrop = () => {
   const dispatch = useDispatch();
-  const currentColumnRole = useSelector(
-    selectCurrentColumnRole,
-  );
+  const currentColumnRole = useSelector(selectCurrentColumnRole);
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result;
 
@@ -53,9 +51,7 @@ export const useDragDrop = () => {
         console.debug('Update column order in view');
         dispatch(updateColumnsOrderInList(result));
       } else {
-        console.debug(
-          'Update tasks order in the same column',
-        );
+        console.debug('Update tasks order in the same column');
         dispatch(updateTasksOrderInColumn(result));
       }
     } else {
@@ -65,8 +61,7 @@ export const useDragDrop = () => {
         updateTaskOwner({
           ...result,
           oldRole: currentColumnRole[source.droppableId],
-          newRole:
-            currentColumnRole[destination!.droppableId],
+          newRole: currentColumnRole[destination!.droppableId],
         }),
       );
     }
