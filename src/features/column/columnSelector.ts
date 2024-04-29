@@ -29,6 +29,8 @@ export const selectColumnsInOriginalOrder = createSelector(
 export const selectCurrentColumnRole = createSelector(
   [selectAllLists, selectCurrentListId, selectAllColumns],
   (allList: Record<ListId, List>, currentListId: ListId, allColumns: Record<ColumnId, Column>) => {
+    const currentList = allList[currentListId];
+    if (!currentList) return {};
     const currentColumnIds = allList[currentListId].columnIds;
     return currentColumnIds.reduce((acc: Record<ColumnId, ColumnRole>, columnId: ColumnId) => {
       acc[columnId] = allColumns[columnId].role;
