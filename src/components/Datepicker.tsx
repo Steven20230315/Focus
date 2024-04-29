@@ -19,11 +19,13 @@ import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 type DatePickerProps = {
   onDateSelect?: (date: Date) => void;
+  date?: string;
 };
 
-export default function Datepicker({ onDateSelect }: DatePickerProps) {
+export default function Datepicker({ onDateSelect, date }: DatePickerProps) {
   const today = startOfDay(new Date());
-  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+
+  const [selectedDay, setSelectedDay] = useState<Date | null>(date ? parse(date, 'yyyy-MM-dd', new Date()) : null);
   // State to control the open status of the menu
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -92,7 +94,6 @@ export default function Datepicker({ onDateSelect }: DatePickerProps) {
       onDateSelect(day);
     }
   };
-
   return (
     <Menu as="div" className="relative">
       {({ open }) => (
@@ -101,16 +102,22 @@ export default function Datepicker({ onDateSelect }: DatePickerProps) {
             type="text"
             hidden
             value={selectedDay ? format(selectedDay, 'yyyy-MM-dd') : undefined}
+            onChange={(e) => setSelectedDay(parse(e.target.value, 'yyyy-MM-dd', new Date()))}
             name="date"
             readOnly
           />
           <Menu.Button onClick={toggleMenu} className={' flex items-center justify-center  gap-4'}>
-            {!open && selectedDay === null ? (
+            {open ? (
+              <>
+                <LuCalendar className="h-5 w-5 text-white" />
+                <div>{selectedDay ? format(selectedDay, 'MMM dd') : ''}</div>
+              </>
+            ) : !date || date === '0001-01-01' ? (
               <LuCalendarPlus className="h-5 w-5 text-white" />
             ) : (
               <>
                 <LuCalendar className="h-5 w-5 text-white" />
-                <div>{selectedDay ? format(selectedDay, 'P') : 'Pick a date'}</div>
+                <div>{format(parse(date, 'yyyy-MM-dd', new Date()), 'MMM dd')}</div>
               </>
             )}
           </Menu.Button>
@@ -122,7 +129,7 @@ export default function Datepicker({ onDateSelect }: DatePickerProps) {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Menu.Items className="absolute -right-28 mt-2 w-60 rounded-md bg-slate-400 px-4 py-2">
+            <Menu.Items className="absolute -right-28 z-30 mt-2 w-60 rounded-md bg-slate-400 px-4 py-2">
               <div className="flex items-center">
                 <h2 className="flex-auto text-sm font-semibold text-gray-900">
                   {format(firstDayCurrentMonth, 'MMMM yyyy')}

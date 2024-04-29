@@ -36,7 +36,11 @@ export default function TaskItem({ task, index }: TaskItemProps) {
             <div className="col-span-6 col-start-6 grid grid-cols-6 place-items-center gap-6 text-center">
               <div className="col-span-2">{task.timeSpend}</div>
               <div className="col-span-2">
-                {task.dueDate !== '0001-01-01' ? task.dueDate : <Datepicker onDateSelect={updateDate} />}
+                {task.dueDate === '0001-01-01' ? (
+                  <Datepicker onDateSelect={updateDate} />
+                ) : (
+                  <Datepicker onDateSelect={updateDate} date={task.dueDate} />
+                )}
               </div>
               <div className="col-span-2">{task.priority}</div>
               {/* <div>
