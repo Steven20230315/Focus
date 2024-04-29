@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { Droppable, type DroppableProvided } from '@hello-pangea/dnd';
 import { selectTasksInColumn } from './TaskSelector';
 import useSort from '../../hooks/useSort';
+import { LuArrowBigUp } from 'react-icons/lu';
+import { LuArrowBigDown } from 'react-icons/lu';
 // import { FiPlusCircle } from 'react-icons/fi';
 
 type TaskListProps = React.HTMLAttributes<HTMLDivElement> & {
@@ -15,24 +17,38 @@ type TaskListProps = React.HTMLAttributes<HTMLDivElement> & {
 
 export default function TaskList({ columnId, onMouseEnter, onMouseLeave }: TaskListProps) {
   const tasks = useSelector(selectTasksInColumn(columnId));
-  const { setSortBy, sortedTasks, setSortingConfig } = useSort(tasks);
+  const { setSortBy, sortedTasks, setSortingConfig, isDescending, sortBy } = useSort(tasks);
 
   return (
     <>
       <div className="divide-y-2" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         <div className=" grid h-fit grid-cols-12 gap-4  py-2 text-start text-lg font-bold sm:text-xs md:text-base">
-          <div className="col-span-5" onClick={() => setSortBy('default')}>
+          <div className="col-span-5 flex" onClick={() => setSortBy('default')}>
             name
           </div>
           <div className="col-span-6 col-start-6 grid grid-cols-6 place-items-center gap-6 text-center">
-            <div className="col-span-2 cursor-pointer hover:opacity-80" onClick={() => setSortingConfig('timeSpend')}>
+            <div
+              className={`col-span-2 flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 transition-all hover:opacity-80 ${
+                sortBy === 'timeSpend' ? 'border shadow ' : ''
+              }`}
+              onClick={() => setSortingConfig('timeSpend')}
+            >
               Time Spend
+              {sortBy === 'timeSpend' ? isDescending ? <LuArrowBigDown /> : <LuArrowBigUp /> : null}
             </div>
-            <div className="col-span-2 cursor-pointer hover:opacity-80" onClick={() => setSortingConfig('dueDate')}>
+            <div
+              className={`col-span-2 flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 transition-all hover:opacity-80 ${sortBy === 'dueDate' ? 'border shadow ' : ''}`}
+              onClick={() => setSortingConfig('dueDate')}
+            >
               Due Date
+              {sortBy === 'dueDate' ? isDescending ? <LuArrowBigDown /> : <LuArrowBigUp /> : null}
             </div>
-            <div className="col-span-2 cursor-pointer hover:opacity-80" onClick={() => setSortingConfig('priority')}>
+            <div
+              className={`col-span-2 flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 transition-all hover:opacity-80 ${sortBy === 'priority' ? 'border shadow ' : ''}`}
+              onClick={() => setSortingConfig('priority')}
+            >
               Priority
+              {sortBy === 'priority' ? isDescending ? <LuArrowBigDown /> : <LuArrowBigUp /> : null}
             </div>
             {/* <div>
               <FiPlusCircle />

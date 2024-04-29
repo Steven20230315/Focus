@@ -50,6 +50,8 @@ export default function useSort(tasks: Task[]) {
   }, [tasks, sortBy, isDescending]);
 
   return {
+    isDescending,
+    sortBy,
     setSortBy,
     sortedTasks,
     setSortingConfig,
