@@ -9,6 +9,11 @@ interface ListsState {
   isSidebarOpen: boolean;
 }
 
+type UpdateListTitlePayload = {
+  listId: ListId;
+  title: string;
+};
+
 // Initial state for projects
 const initialState: ListsState = {
   allLists: {
@@ -154,6 +159,13 @@ const projectSlice = createSlice({
     toggleSidebar: (state: ListsState) => {
       state.isSidebarOpen = !state.isSidebarOpen;
     },
+    updateListTitle: (state: ListsState, action: PayloadAction<UpdateListTitlePayload>) => {
+      const list = state.allLists[action.payload.listId];
+      if (!list) {
+        throw new Error('The list you want to update does not exist');
+      }
+      list.title = action.payload.title;
+    },
   },
 });
 
@@ -165,5 +177,6 @@ export const {
   updateListsOrder,
   updateColumnsOrderInList,
   toggleSidebar,
+  updateListTitle,
 } = projectSlice.actions;
 export default projectSlice.reducer;
