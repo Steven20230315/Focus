@@ -1,6 +1,6 @@
 import { type ListId, type ColumnId, type ColumnRole } from './';
 export type TaskId = string;
-export type Priority = 'Low' | 'Normal' | 'High' | 'Urgen';
+export type Priority = 'Low' | 'Normal' | 'High' | 'Urgent';
 
 export type TaskStatus = ColumnRole;
 export type Task = {
@@ -11,6 +11,6 @@ export type Task = {
   columnId: ColumnId;
   status: TaskStatus;
   priority: Priority;
-  dueDate?: string;
+  dueDate: string;
   timeSpend: number;
 };

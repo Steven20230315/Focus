@@ -10,7 +10,7 @@ export default function PriorityPicker() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const priorities: Record<Priority, string> = {
-    Urgen: 'text-red-500',
+    Urgent: 'text-red-500',
     High: 'text-yellow-500/90',
     Normal: 'text-cyan-500',
     Low: 'text-slate-500/90',

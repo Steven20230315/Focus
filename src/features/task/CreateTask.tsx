@@ -26,28 +26,31 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const dueDate = new FormData(e.currentTarget).get('date') as string;
+    const dueDate = (new FormData(e.currentTarget).get('date') as string) || '0001-01-01';
     const priority = new FormData(e.currentTarget).get('priority') as Priority;
 
     if (!title.trim()) return;
 
-    // Create the base task object without dueDate
-    const newTask: Task = {
-      title,
-      priority,
-      listId,
-      columnId,
-      status: columnRole,
-      taskId: uuidv4(),
-      timeSpend: 0,
-    };
-
-    // If dueDate is provided and is valid, add it to the task object
-    if (dueDate && isValid(parse(dueDate, 'yyyy-MM-dd', new Date()))) {
-      newTask['dueDate'] = dueDate;
+    if (dueDate) {
+      if (!isValid(parse(dueDate, 'yyyy-MM-dd', new Date()))) {
+        return;
+      }
     }
+    if (dueDate && isValid(parse(dueDate, 'yyyy-MM-dd', new Date()))) {
+      const newTask: Task = {
+        title,
+        priority,
+        listId,
+        columnId,
+        status: columnRole,
+        taskId: uuidv4(),
+        timeSpend: 0,
+        dueDate,
+      };
+      dispatch(addTask(newTask));
+    }
+    // Create the base task object without dueDate
 
-    dispatch(addTask(newTask));
     e.currentTarget.reset();
     setIsFormOpen(false);
     setTitle('');
