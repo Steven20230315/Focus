@@ -21,6 +21,7 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
   const [title, setTitle] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -54,6 +55,11 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
 
   useEscapeClose(isFormOpen, setIsFormOpen);
   useCloseOnLoseFocus(ref, isFormOpen, setIsFormOpen);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  });
   return (
     <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} ref={ref}>
       {!isFormOpen ? (
@@ -77,6 +83,7 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
             name="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            ref={inputRef}
             className="boder-white w-1/2 appearance-none bg-transparent text-black placeholder-black/50 focus:opacity-90 focus:outline-none  "
           />
           <div className="mr-7 flex items-center gap-3">
