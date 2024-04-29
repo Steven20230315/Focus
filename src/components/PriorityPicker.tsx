@@ -18,7 +18,7 @@ export default function PriorityPicker() {
   return (
     <Menu
       as="div"
-      className="relative  flex self-center rounded-sm border border-stone-400 p-1  text-left shadow-sm shadow-black/30 "
+      className="relative  flex self-center rounded-sm  p-1  text-left hover:border hover:border-slate-300 hover:shadow-sm hover:shadow-black/30"
     >
       {/* // Default value of the priority is Normal */}
       <input type="text" hidden readOnly name="priority" value={priority || 'Normal'} ref={inputRef} />
@@ -39,21 +39,18 @@ export default function PriorityPicker() {
       >
         <Menu.Items className="absolute left-0 flex w-36 origin-top-left flex-col items-center justify-center rounded-md border border-black bg-slate-600 ">
           {Object.entries(priorities).map(([key, value]) => (
-            <div className="w-full px-1 py-2">
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    type="button"
-                    key={key}
-                    onClick={() => setPriority(key as Priority)}
-                    className={`mx-auto flex w-full items-center gap-5 rounded-md px-2 py-1 text-lg ${value} ${active ? 'bg-slate-300 opacity-80' : ''} `}
-                  >
-                    <IoFlag className="h-5 w-5" />
-                    <span>{key}</span>
-                  </button>
-                )}
-              </Menu.Item>
-            </div>
+            <Menu.Item key={key}>
+              {({ active }) => (
+                <button
+                  type="button"
+                  onClick={() => setPriority(key as Priority)}
+                  className={`mx-auto flex w-full items-center gap-5 rounded-md px-2 py-1 text-lg ${value} ${active ? 'bg-slate-300 opacity-80' : ''} `}
+                >
+                  <IoFlag className="h-5 w-5" />
+                  <span>{key}</span>
+                </button>
+              )}
+            </Menu.Item>
           ))}
         </Menu.Items>
       </Transition>
