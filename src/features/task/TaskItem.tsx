@@ -16,22 +16,19 @@ export default function TaskItem({ taskId, index }: TaskItemProps) {
   return (
     <Draggable draggableId={taskId} index={index}>
       {(provided: DraggableProvided) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          className="grid h-full cursor-move grid-cols-12 gap-4 pb-3 pt-1 text-sm hover:bg-stone-700 "
-        >
-          {/* <AiOutlineCheckCircle/> */}
-          <div className="col-span-5">
-            <TaskTitle taskId={taskId} title={task.title} columnId={task.columnId} />
-          </div>
-          <div className="col-span-7 col-start-6 grid grid-cols-6 place-items-center gap-6 text-center">
-            <div className="col-span-2">Time Spend</div>
-            <div className="col-span-2">{task.dueDate ? task.dueDate : <Datepicker />}</div>
-            <div className="col-span-1">{task.priority}</div>
-            <div>
-              <AiOutlineSmallDash className="m-auto" />
+        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+          <div className="my-1 grid h-full cursor-move grid-cols-12 content-center items-center gap-4 rounded-md py-2 text-sm hover:bg-slate-300 ">
+            {/* <AiOutlineCheckCircle/> */}
+            <div className="col-span-5">
+              <TaskTitle taskId={taskId} title={task.title} columnId={task.columnId} />
+            </div>
+            <div className="col-span-7 col-start-6 grid grid-cols-6 place-items-center gap-6 text-center">
+              <div className="col-span-2">Time Spend</div>
+              <div className="col-span-2">{task.dueDate ? task.dueDate : <Datepicker />}</div>
+              <div className="col-span-1">{task.priority}</div>
+              <div>
+                <AiOutlineSmallDash className="m-auto" />
+              </div>
             </div>
           </div>
         </div>
