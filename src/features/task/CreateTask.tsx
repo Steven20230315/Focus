@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { addTask } from './taskSlice';
 import { ColumnId, ColumnRole, ListId, Priority, Task } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
+import useEscapeClose from '../../hooks/useEscapeClose';
 
 type CreateTaskProps = {
   onMouseEnter: () => void;
@@ -50,19 +51,7 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
     setTitle('');
   };
 
-  useEffect(() => {
-    function callBack(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        setIsFormOpen(false);
-      }
-    }
-    document.addEventListener('keydown', callBack);
-
-    return () => {
-      document.removeEventListener('keydown', callBack);
-    };
-  }, [isFormOpen]);
-
+  useEscapeClose(isFormOpen, setIsFormOpen);
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (isFormOpen && ref.current && !ref.current.contains(e.target as Node)) {
