@@ -1,67 +1,127 @@
-import { type Task, type TaskId, type Column, type ColumnId } from '../../types';
-import { type FormEvent, useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import Datepicker from '../../components/Datepicker';
+import PriorityPicker from '../../components/PriorityPicker';
+import { isValid, parse } from 'date-fns';
+import { FormEvent, useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { addTask } from './taskSlice';
-import { selectColumnsInOriginalOrder } from '../column/columnSelector';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { ColumnId, ColumnRole, ListId, Priority, Task } from '../../types';
+import { v4 as uuidv4 } from 'uuid';
 
-export default function CreateTask() {
-  const dispatch = useDispatch();
-  const currentColumns = useSelector(selectColumnsInOriginalOrder);
+type CreateTaskProps = {
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+  listId: ListId;
+  columnId: ColumnId;
+  columnRole: ColumnRole;
+};
+
+export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnId, columnRole }: CreateTaskProps) {
   const [title, setTitle] = useState('');
-  const currentListId = useSelector((state: RootState) => state.list.currentListId);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    setTitle('');
-  }, [currentListId]);
-
-  const handleAddTask = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const dueDate = new FormData(e.currentTarget).get('date') as string;
+    const priority = new FormData(e.currentTarget).get('priority') as Priority;
 
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get('title') as string;
-    const trimTitle = title.trim();
-    if (!trimTitle) {
-      console.log('Empty title');
-      return;
-    }
-    const columnId = formData.get('columnId') as ColumnId;
-    const taskId = uuidv4() as TaskId;
-    const selectedColumn = currentColumns.find((column: Column) => column.columnId === columnId);
-    if (!selectedColumn) {
-      throw new Error('Column not found');
-    }
+    if (!title.trim()) return;
+
+    // Create the base task object without dueDate
     const newTask: Task = {
-      taskId: taskId,
-      title: title,
-      listId: currentListId,
-      columnId: selectedColumn.columnId,
-      status: selectedColumn.role,
+      title,
+      priority,
+      listId,
+      columnId,
+      status: columnRole,
+      taskId: uuidv4(),
+      timeSpend: 0,
     };
+
+    // If dueDate is provided and is valid, add it to the task object
+    if (dueDate && isValid(parse(dueDate, 'yyyy-MM-dd', new Date()))) {
+      newTask['dueDate'] = dueDate;
+    }
+
     dispatch(addTask(newTask));
     e.currentTarget.reset();
+    setIsFormOpen(false);
+    setTitle('');
   };
+
+  useEffect(() => {
+    function callBack(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setIsFormOpen(false);
+      }
+    }
+    document.addEventListener('keydown', callBack);
+
+    return () => {
+      document.removeEventListener('keydown', callBack);
+    };
+  }, [isFormOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (isFormOpen && ref.current && !ref.current.contains(e.target as Node)) {
+        setIsFormOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isFormOpen]);
+
   return (
-    <div>
-      {/* <DropdownMenu /> */}
-      <form key={currentListId} onSubmit={handleAddTask} autoComplete="off" className="flex gap-5">
-        <input
-          className="rounded-xl px-3 py-2"
-          type="text"
-          name="title"
-          placeholder="Enter task title"
-          defaultValue={title}
-        />
-        <select name="columnId" id="columnId" className="flex gap-3 rounded-xl px-3 py-2">
-          {currentColumns.map((column: Column) => (
-            <option key={column.columnId} value={column.columnId}>
-              {column.role}
-            </option>
-          ))}
-        </select>
-      </form>
+    <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} ref={ref}>
+      {!isFormOpen ? (
+        <button
+          role="open form for creating new task"
+          type="button"
+          className="inline-block h-5 w-20 cursor-pointer"
+          onClick={() => setIsFormOpen(true)}
+        >
+          + Add task
+        </button>
+      ) : (
+        <form
+          onSubmit={onSubmit}
+          className="mx-auto flex h-7 w-full items-center justify-between gap-2 text-white"
+          autoComplete="off"
+        >
+          <input
+            type="text"
+            placeholder="Enter Task Name"
+            name="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="boder-white w-1/2 appearance-none bg-transparent text-black placeholder-black/50 focus:opacity-90 focus:outline-none  "
+          />
+          <div className="mr-7 flex items-center gap-3">
+            <Datepicker />
+            <PriorityPicker />
+            <button
+              className={`rounded-md bg-slate-500 px-2 py-1 text-xs hover:opacity-90 ${!title ? 'cursor-not-allowed' : 'cursor-pointer'} `}
+              disabled={!title}
+              type="submit"
+            >
+              Add
+            </button>
+            <button
+              className="rounded-md bg-slate-500 px-2 py-1 text-xs hover:opacity-90"
+              type="reset"
+              onClick={() => setIsFormOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }
