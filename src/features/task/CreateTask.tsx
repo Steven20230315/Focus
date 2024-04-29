@@ -7,6 +7,7 @@ import { addTask } from './taskSlice';
 import { ColumnId, ColumnRole, ListId, Priority, Task } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 import useEscapeClose from '../../hooks/useEscapeClose';
+import useCloseOnLoseFocus from '../../hooks/useCloseOnLoseFocus';
 
 type CreateTaskProps = {
   onMouseEnter: () => void;
@@ -52,20 +53,7 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
   };
 
   useEscapeClose(isFormOpen, setIsFormOpen);
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (isFormOpen && ref.current && !ref.current.contains(e.target as Node)) {
-        setIsFormOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isFormOpen]);
-
+  useCloseOnLoseFocus(ref, isFormOpen, setIsFormOpen);
   return (
     <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} ref={ref}>
       {!isFormOpen ? (
