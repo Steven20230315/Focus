@@ -14,6 +14,7 @@ import {
   isSameDay,
   parse,
   add,
+  isValid,
 } from 'date-fns';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
@@ -25,7 +26,12 @@ type DatePickerProps = {
 export default function Datepicker({ onDateSelect, date }: DatePickerProps) {
   const today = startOfDay(new Date());
 
-  const [selectedDay, setSelectedDay] = useState<Date | null>(date ? parse(date, 'yyyy-MM-dd', new Date()) : null);
+  // When dateProp is provided but its not a valid date, it defaults to "0001-01-01". This ensure selectedDay is always a valid date
+  // However, this means the consumer of this component won't know it provid a invalid date.
+  const [selectedDay, setSelectedDay] = useState<Date>(() => {
+    const parsedDate = parse(dateProp || '0001-01-01', 'yyyy-MM-dd', new Date());
+    return isValid(parsedDate) ? parsedDate : parse('0001-01-01', 'yyyy-MM-dd', new Date());
+  });
   // State to control the open status of the menu
   const [menuOpen, setMenuOpen] = useState(false);
 
