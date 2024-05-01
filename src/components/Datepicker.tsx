@@ -23,7 +23,7 @@ type DatePickerProps = {
   date?: string;
 };
 
-export default function Datepicker({ onDateSelect, date }: DatePickerProps) {
+export default function Datepicker({ onDateSelect, date: dateProp }: DatePickerProps) {
   const today = startOfDay(new Date());
 
   // When dateProp is provided but its not a valid date, it defaults to "0001-01-01". This ensure selectedDay is always a valid date
@@ -94,6 +94,32 @@ export default function Datepicker({ onDateSelect, date }: DatePickerProps) {
     setCurrentMonth(format(firstDayPrevMonth, 'MMM-yyyy'));
   }
 
+  function renderCalendarButton(open: boolean) {
+    const fallbackDate = '0001-01-01'; // Constant for fallback date
+    const formatedSelectedDay = format(selectedDay, 'yyyy-MM-dd');
+    // Determine whether to use LuCalendar or LuCalendarPlus.
+    // Only use LuCalendarPlus whne there is no valid date and datepicker it closed
+    const hasValidDate = (dateProp && dateProp !== fallbackDate) || formatedSelectedDay !== fallbackDate;
+    const useLuCalendar = open || hasValidDate;
+    const CalendarIcon = useLuCalendar ? LuCalendar : LuCalendarPlus;
+
+    // Decide the date to display
+    let displayDate = null;
+    if (dateProp && dateProp !== fallbackDate) {
+      // Use day prop if it's valid
+      displayDate = dateProp;
+    } else if (!dateProp && formatedSelectedDay !== fallbackDate) {
+      // Use formatedSelectedDay if it's valid and dateProp isn't
+      displayDate = formatedSelectedDay;
+    }
+    return (
+      <>
+        <CalendarIcon className="h-5 w-5 text-white" />
+        {displayDate && <div>{displayDate}</div>}
+      </>
+    );
+  }
+
   const handleDateSelect = (day: Date) => {
     setSelectedDay(day);
     if (onDateSelect) {
@@ -107,25 +133,13 @@ export default function Datepicker({ onDateSelect, date }: DatePickerProps) {
           <input
             type="text"
             hidden
-            value={selectedDay ? format(selectedDay, 'yyyy-MM-dd') : undefined}
+            value={selectedDay ? format(selectedDay, 'yyyy-MM-dd') : selectedDay}
             onChange={(e) => setSelectedDay(parse(e.target.value, 'yyyy-MM-dd', new Date()))}
             name="date"
             readOnly
           />
           <Menu.Button onClick={toggleMenu} className={' flex items-center justify-center  gap-4'}>
-            {open ? (
-              <>
-                <LuCalendar className="h-5 w-5 text-white" />
-                <div>{selectedDay ? format(selectedDay, 'MMM dd') : ''}</div>
-              </>
-            ) : !date || date === '0001-01-01' ? (
-              <LuCalendarPlus className="h-5 w-5 text-white" />
-            ) : (
-              <>
-                <LuCalendar className="h-5 w-5 text-white" />
-                <div>{format(parse(date, 'yyyy-MM-dd', new Date()), 'MMM dd')}</div>
-              </>
-            )}
+            {renderCalendarButton(open)}
           </Menu.Button>
           <Transition
             enter="transform transition duration-100 ease-in"
@@ -135,7 +149,7 @@ export default function Datepicker({ onDateSelect, date }: DatePickerProps) {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Menu.Items className="absolute -right-28 z-30 mt-2 w-60 rounded-md bg-slate-400 px-4 py-2">
+            <Menu.Items className="absolute -right-28 z-30 mt-2 w-60 rounded-md bg-slate-400 px-4 py-2 transition-all">
               <div className="flex items-center">
                 <h2 className="flex-auto text-sm font-semibold text-gray-900">
                   {format(firstDayCurrentMonth, 'MMMM yyyy')}
