@@ -17,7 +17,41 @@ export type DeleteTaskPayload = {
 };
 
 const initialState: TaskState = {
-  allTasks: {},
+  allTasks: {
+    '44f64636-1240-47df-af28-69a2f0666358': {
+      taskId: '44f64636-1240-47df-af28-69a2f0666358',
+      title: 'Task 1',
+      columnId: '68c83c43-5b6c-4ddd-8718-9504d724b19e',
+      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
+      status: 'To Do',
+      priority: 'Low',
+      dueDate: '2022-01-21',
+      timeSpend: 0,
+      pomodoroLength: 15,
+    },
+    '6b24381f-ac0f-4e6f-9fef-c63be4fb6e9b': {
+      taskId: '6b24381f-ac0f-4e6f-9fef-c63be4fb6e9b',
+      title: 'Task 1',
+      columnId: '68c83c43-5b6c-4ddd-8718-9504d724b19e',
+      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
+      status: 'To Do',
+      priority: 'Normal',
+      dueDate: '2024-07-07',
+      timeSpend: 1500,
+      pomodoroLength: 15,
+    },
+    '499a2cac-d874-4e30-bc36-d800449ccbcc': {
+      taskId: '499a2cac-d874-4e30-bc36-d800449ccbcc',
+      title: 'Task 1',
+      columnId: '68c83c43-5b6c-4ddd-8718-9504d724b19e',
+      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
+      status: 'To Do',
+      priority: 'Urgent',
+      dueDate: '2025-01-14',
+      timeSpend: 3000,
+      pomodoroLength: 15,
+    },
+  },
 };
 
 const taskSlice = createSlice({
