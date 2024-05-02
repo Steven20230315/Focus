@@ -38,3 +38,12 @@ export const selectCurrentColumnRole = createSelector(
     }, {});
   },
 );
+
+export const selectColumnIdsInCurrentList = createSelector(
+  [selectAllLists, selectCurrentListId],
+  (allList: Record<ListId, List>, currentListId: ListId) => {
+    const currentList = allList[currentListId];
+    if (!currentList) return [];
+    return currentList.columnIdsOrder;
+  },
+);

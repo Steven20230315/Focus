@@ -7,7 +7,7 @@ export default function View() {
   // The view component only receives the list id and list title of the current list.
   // Changes to the columnIds or columnIdsOrder of the current list will not cause a re-render
 
-  const { title } = useSelector(selectCurrentListDetails);
+  const title = useSelector(selectCurrentListDetails);
   return (
     <Transition
       show={true}

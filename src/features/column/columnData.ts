@@ -5,7 +5,11 @@ export const columnSliceInitialState: ColumnState = {
     '68c83c43-5b6c-4ddd-8718-9504d724b19e': {
       columnId: '68c83c43-5b6c-4ddd-8718-9504d724b19e',
       role: 'To Do',
-      taskIds: [],
+      taskIds: [
+        '44f64636-1240-47df-af28-69a2f0666358',
+        '6b24381f-ac0f-4e6f-9fef-c63be4fb6e9b',
+        '499a2cac-d874-4e30-bc36-d800449ccbcc',
+      ],
       listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
     },
     'a0ef1554-c6d1-447a-8d6d-09a2e475e92d': {

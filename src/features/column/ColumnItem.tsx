@@ -1,26 +1,29 @@
 import { Draggable, type DraggableProvided } from '@hello-pangea/dnd';
-import { type Column } from '../../types';
+import { type ColumnId } from '../../types';
 import TaskList from '../task/TaskList';
 import { Disclosure, Transition } from '@headlessui/react';
+import CreateTask2 from '../task/CreateTask';
 type ColumnItemProps = {
   index: number;
-  column: Column;
-  // columnId: ColumnId;
+  columnId: ColumnId;
 };
 import { BsCaretRightFill } from 'react-icons/bs';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
-export default function ColumnItem({ index, column }: ColumnItemProps) {
+export default function ColumnItem({ index, columnId }: ColumnItemProps) {
   const [isTaskListHovered, setIsTaskListHovered] = useState(false);
-
+  const columnData = useSelector((state: RootState) => state.column.allColumns[columnId]);
   const handleMouseEnter = () => setIsTaskListHovered(true);
   const handleMouseLeave = () => setIsTaskListHovered(false);
 
   return (
-    <Draggable draggableId={column.columnId} index={index}>
+    // <Draggable draggableId={column.columnId} index={index}>
+    <Draggable draggableId={columnData.columnId} index={index}>
       {(provided: DraggableProvided) => (
         <div
-          className={`rounded-xl bg-stone-400 p-3 text-gray-800/90 shadow-sm shadow-black ${isTaskListHovered ? '' : 'hover:bg-stone-500/90 hover:text-black'} `}
+          className={`rounded-xl bg-slate-500 p-3 text-gray-800/90 shadow-sm shadow-black ${isTaskListHovered ? '' : 'hover:bg-sky-600 hover:text-black'} `}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -30,7 +33,10 @@ export default function ColumnItem({ index, column }: ColumnItemProps) {
               <>
                 <Disclosure.Button className="flex items-center justify-center">
                   <BsCaretRightFill className={open ? 'rotate-90 transform' : ''} />
-                  <h3 className=" px-4 py-2 text-center text-2xl font-bold  sm:px-8 ">{column.role}</h3>
+                  <h3 className="cursor-not-allowed text-center text-2xl  font-bold sm:px-8 sm:text-sm md:text-lg ">
+                    {columnData.role}
+                    {/* {column.role} */}
+                  </h3>
                 </Disclosure.Button>
 
                 <Transition
@@ -41,11 +47,18 @@ export default function ColumnItem({ index, column }: ColumnItemProps) {
                   leaveFrom="transform scale-100 opacity-100"
                   leaveTo="transform scale-95 opacity-0"
                 >
-                  <Disclosure.Panel className="flex flex-col text-sm">
+                  <Disclosure.Panel className="flex flex-col  text-sm">
                     <TaskList
-                      columnId={column.columnId}
+                      columnId={columnData.columnId}
                       onMouseEnter={handleMouseEnter}
                       onMouseLeave={handleMouseLeave}
+                    />
+                    <CreateTask2
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                      listId={columnData.listId}
+                      columnId={columnData.columnId}
+                      columnRole={columnData.role}
                     />
                   </Disclosure.Panel>
                 </Transition>

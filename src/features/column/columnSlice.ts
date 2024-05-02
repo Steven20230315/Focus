@@ -29,7 +29,6 @@ const columnSlice = createSlice({
   reducers: {
     addColumns(state: ColumnState, action: PayloadAction<Record<ColumnId, Column>>) {
       Object.assign(state.allColumns, action.payload);
-      console.log('Columns added:', action.payload);
     },
     updateColumn(state: ColumnState, action: PayloadAction<updateColumnPayload>) {
       const { columnId, taskId } = action.payload;
@@ -38,9 +37,6 @@ const columnSlice = createSlice({
     },
     updateTasksOrderInColumn(state: ColumnState, action: PayloadAction<DropResult>) {
       const { source, destination, draggableId } = action.payload;
-      console.log(`Source: ${source.droppableId}`);
-      console.log(`Destination: ${destination?.droppableId}`);
-      console.log(`Draggable ID: ${draggableId}`);
       const sourceColumn = state.allColumns[source.droppableId];
 
       const destinationColumn = state.allColumns[destination!.droppableId];
@@ -100,15 +96,12 @@ const columnSlice = createSlice({
       })
       .addCase(addTask, (state: ColumnState, action: PayloadAction<Task>) => {
         const { columnId, taskId } = action.payload;
-        console.log('Task added:', taskId);
-        console.log('Column ID:', columnId);
         state.allColumns[columnId].taskIds.push(taskId);
       })
       .addCase(deleteTask, (state: ColumnState, action: PayloadAction<DeleteTaskPayload>) => {
         const { columnId, taskId } = action.payload;
         const deleteTaskIdFromThisColumn = state.allColumns[columnId];
         deleteTaskIdFromThisColumn.taskIds.splice(deleteTaskIdFromThisColumn.taskIds.indexOf(taskId), 1);
-        console.log('Task deleted:', taskId);
       });
   },
 });
