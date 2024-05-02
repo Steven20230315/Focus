@@ -46,6 +46,8 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
         taskId: uuidv4(),
         timeSpend: 0,
         dueDate,
+        // In seconds
+        pomodoroLength: 1500,
       };
       dispatch(addTask(newTask));
     }
@@ -64,7 +66,7 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
     }
   });
   return (
-    <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} ref={ref}>
+    <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} ref={ref} className="relative flex">
       {!isFormOpen ? (
         <button
           role="open form for creating new task"
@@ -77,7 +79,7 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
       ) : (
         <form
           onSubmit={onSubmit}
-          className="mx-auto flex h-7 w-full items-center justify-between gap-2 text-white"
+          className="mx-auto flex h-7 w-full flex-1 items-center justify-between gap-2 text-white"
           autoComplete="off"
         >
           <input
@@ -89,23 +91,27 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
             ref={inputRef}
             className="boder-white w-1/2 appearance-none bg-transparent text-black placeholder-black/50 focus:opacity-90 focus:outline-none  "
           />
-          <div className="mr-7 flex items-center gap-3">
-            <Datepicker />
-            <PriorityPicker />
-            <button
-              className={`rounded-md bg-slate-500 px-2 py-1 text-xs hover:opacity-90 ${!title ? 'cursor-not-allowed' : 'cursor-pointer'} `}
-              disabled={!title}
-              type="submit"
-            >
-              Add
-            </button>
-            <button
-              className="rounded-md bg-slate-500 px-2 py-1 text-xs hover:opacity-90"
-              type="reset"
-              onClick={() => setIsFormOpen(false)}
-            >
-              Cancel
-            </button>
+          <div className=" flex min-w-0 flex-1 items-center gap-3 ">
+            <div className="flex gap-2">
+              <Datepicker />
+              <PriorityPicker />
+            </div>
+            <div className="ml-auto mr-10 flex gap-2">
+              <button
+                className={`rounded-md bg-slate-400 px-2 py-1 text-xs hover:shadow-md hover:shadow-gray-600 hover:ring ${!title ? 'cursor-not-allowed' : 'cursor-pointer'} `}
+                disabled={!title}
+                type="submit"
+              >
+                Add
+              </button>
+              <button
+                className="rounded-md bg-slate-400 px-2 py-1 text-xs hover:shadow-md hover:shadow-gray-600 hover:ring"
+                type="reset"
+                onClick={() => setIsFormOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </form>
       )}
