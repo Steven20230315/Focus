@@ -2,10 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-#root,
 body {
-  width: 100vw;
-  padding: 0.05px;
+  /* gray-700 */
+  background-color: #374151;
+  color: #d1d5db;
+}
+
+#root {
   height: 100vh;
-  background-color: #475569;
+  min-width: 1080px;
 }
