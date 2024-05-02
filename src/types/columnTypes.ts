@@ -18,7 +18,4 @@ export interface ColumnWithTasks extends Column {
 export type ColumnState = {
   allColumns: Record<ColumnId, Column>;
   // This provide access to the columns in the current list including the task ids
-  columnsInCurrentList: Record<ColumnId, Column>;
-  // This is for manipulating the order of the columns
-  columnIdsInCurrentList: ColumnId[];
 };
