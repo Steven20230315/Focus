@@ -13,4 +13,5 @@ export type Task = {
   priority: Priority;
   dueDate: string;
   timeSpend: number;
+  pomodoroLength: number;
 };
