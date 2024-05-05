@@ -1,19 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { type List, type ListId } from '../../types';
+import { type List, type ListId, ListsState, type UpdateListTitlePayload } from '../../types';
 import { type DropResult } from '@hello-pangea/dnd';
 // Project slice is responsible for managing projects (CRUD operations)
-interface ListsState {
-  allLists: Record<ListId, List>;
-  listsOrder: ListId[];
-  currentListId: ListId;
-  isSidebarOpen: boolean;
-}
-
-type UpdateListTitlePayload = {
-  listId: ListId;
-  title: string;
-};
-
 // Initial state for projects
 const initialState: ListsState = {
   allLists: {
