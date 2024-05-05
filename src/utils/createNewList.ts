@@ -12,7 +12,6 @@ export const createNewListWithDefaultColumns = (title: string) => {
     listId: newListId,
     title: title,
     columnIds: [toDoColumnId, inProgressColumnId, doneColumnId, pendingColumnId],
-    columnIdsOrder: [toDoColumnId, inProgressColumnId, doneColumnId, pendingColumnId],
   };
   return newList;
 };

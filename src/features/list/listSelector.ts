@@ -50,7 +50,7 @@ export const selectCurrentListDetails = createSelector(
     // Check if the current list ID exists in the allLists record
     const list = allList[currentListId];
     if (!list) {
-      return null; 
+      return null;
     }
     return list.title;
   },

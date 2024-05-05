@@ -74,7 +74,7 @@ const columnSlice = createSlice({
     builder
       .addCase(addListWithDefaultColumns, (state: ColumnState, action: PayloadAction<List>) => {
         const roles: ColumnRole[] = ['To Do', 'In Progress', 'Done', 'Pending'];
-        const { columnIdsOrder: columnIds, listId } = action.payload;
+        const { columnIds: columnIds, listId } = action.payload;
         roles.forEach((role: ColumnRole, index: number) => {
           const columnId = columnIds[index]; // Make sure columnIds exist and are correctly indexed
           state.allColumns[columnId] = {
@@ -86,7 +86,7 @@ const columnSlice = createSlice({
         });
       })
       .addCase(deleteList, (state: ColumnState, action: PayloadAction<List>) => {
-        const { columnIdsOrder: columnIds } = action.payload;
+        const { columnIds: columnIds } = action.payload;
         columnIds.map((columnId: ColumnId) => {
           delete state.allColumns[columnId];
         });

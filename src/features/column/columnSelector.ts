@@ -9,18 +9,8 @@ export const selectAllColumns = (state: RootState) => state.column.allColumns;
 export const selectColumnsInUpdatedOrder = createSelector(
   [selectAllLists, selectCurrentListId, selectAllColumns],
   (allLists: Record<ListId, List>, currentListId: ListId, allColumns: Record<ColumnId, Column>) => {
-    const updatedColumnsOrder = allLists[currentListId].columnIdsOrder;
+    const updatedColumnsOrder = allLists[currentListId].columnIds;
     return updatedColumnsOrder.map((columnId: ColumnId) => {
-      return allColumns[columnId];
-    });
-  },
-);
-
-export const selectColumnsInOriginalOrder = createSelector(
-  [selectAllLists, selectCurrentListId, selectAllColumns],
-  (allLists: Record<ListId, List>, currentListId: ListId, allColumns: Record<ColumnId, Column>) => {
-    const originalColumnsOrder = allLists[currentListId].columnIds;
-    return originalColumnsOrder.map((columnId: ColumnId) => {
       return allColumns[columnId];
     });
   },
@@ -44,6 +34,6 @@ export const selectColumnIdsInCurrentList = createSelector(
   (allList: Record<ListId, List>, currentListId: ListId) => {
     const currentList = allList[currentListId];
     if (!currentList) return [];
-    return currentList.columnIdsOrder;
+    return currentList.columnIds;
   },
 );
