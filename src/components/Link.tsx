@@ -1,7 +1,6 @@
 import { Draggable, type DraggableProvided } from '@hello-pangea/dnd';
 import { setCurrentList } from '../features/list/listSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { type RootState } from '../store';
+import { useAppDispatch, useAppSelector } from '../hooks/useHooks';
 import { type List, type ListId } from '../types';
 import { Menu } from '@headlessui/react';
 import { BsThreeDots } from 'react-icons/bs';
@@ -16,7 +15,7 @@ type LinkProps = {
   listTitle: List['title'];
 };
 export default function Link({ listId, index, listTitle }: LinkProps) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const onClick = () => {
     dispatch(setCurrentList(listId));
   };
@@ -24,9 +23,9 @@ export default function Link({ listId, index, listTitle }: LinkProps) {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const currentListId = useSelector((state: RootState) => state.list.currentListId);
-  const listData = useSelector((state: RootState) => state.list.allLists[listId]);
-  const isSidebarOpen = useSelector((state: RootState) => state.list.isSidebarOpen);
+  const currentListId = useAppSelector((state) => state.list.currentListId);
+  const listData = useAppSelector((state) => state.list.allLists[listId]);
+  const isSidebarOpen = useAppSelector((state) => state.list.isSidebarOpen);
 
   function editListHandler(e: MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
@@ -51,7 +50,7 @@ export default function Link({ listId, index, listTitle }: LinkProps) {
           {...provided.dragHandleProps}
           {...provided.draggableProps}
           onClick={onClick}
-          className={` flex rounded-xl bg-gray-400  px-4  py-2 font-bold text-slate-700  hover:bg-slate-400 hover:text-slate-50 ${currentListId === listId ? 'shadow shadow-inherit ring-1 ring-slate-300' : 'shadow-inherit/70 shadow-sm shadow-inherit'} ${!isSidebarOpen && 'opacity-0'}`}
+          className={` flex rounded-xl bg-gray-400 px-2  py-1  text-xs text-slate-700  hover:bg-slate-400 hover:text-slate-50 sm:px-3  sm:text-sm ${currentListId === listId ? 'shadow shadow-inherit ring-1 ring-slate-300' : 'shadow-inherit/70 shadow-sm shadow-inherit'} ${!isSidebarOpen && 'opacity-0'}`}
         >
           {!isEditing ? (
             <h2>{listTitle}</h2>
@@ -81,9 +80,9 @@ export default function Link({ listId, index, listTitle }: LinkProps) {
           <Menu as="div" className=" relative ml-auto inline-block text-left ">
             {/* Prevent setting current list when clicking dropdown */}
             <Menu.Button onClick={(e) => e.stopPropagation()}>
-              <BsThreeDots className=" h-3 w-3 translate-y-[60%]" />
+              <BsThreeDots className=" h-2 w-2 translate-y-[60%] sm:h-3 sm:w-3" />
             </Menu.Button>
-            <Menu.Items className="absolute -left-1 top-4 z-10 mt-3 flex w-24 flex-col gap-1 divide-y divide-gray-100 rounded-md border bg-gray-500 text-xs font-thin shadow ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Menu.Items className="sm:w-18 w-18 absolute -left-1 top-4 z-10 mt-3 flex flex-col gap-1 divide-y divide-gray-100 rounded-md border bg-gray-500 text-xs font-thin shadow ring-1 ring-black ring-opacity-5 focus:outline-none md:w-24 md:font-light">
               <div className="px-3 py-3">
                 <Menu.Item>
                   <button

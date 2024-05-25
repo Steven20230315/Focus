@@ -1,16 +1,45 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
-// import GlobalStyles from "./GlobalStyles.ts";
-import { store } from './store.ts';
+import { persistor, store } from './store.ts';
 import { Provider } from 'react-redux';
 import './input.css';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { Login, Register, App, Root } from './pages';
+import { PersistGate } from 'redux-persist/integration/react';
+import ProtectedRoute from './features/user/ProtectedRoute.tsx';
+const router = createBrowserRouter(
+  [
+    {
+      path: '',
+      element: <Root />,
+      children: [
+        {
+          path: 'login',
+          element: <Login />,
+        },
+        {
+          path: 'register',
+          element: <Register />,
+        },
+        {
+          path: 'app',
+          element: <ProtectedRoute />,
+          children: [{ path: '', element: <App /> }],
+        },
+      ],
+    },
+  ],
+  {
+    basename: '/Focus/',
+  },
+);
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      {/* <GlobalStyles /> */}
-
-      <App />
+      <PersistGate loading={<div>Loading</div>} persistor={persistor}>
+        <RouterProvider router={router} />
+      </PersistGate>
     </Provider>
   </React.StrictMode>,
 );

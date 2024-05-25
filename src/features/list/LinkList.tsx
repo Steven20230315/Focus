@@ -22,7 +22,7 @@ export default function LinkList() {
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`bg-inherit/90 flex flex-col  gap-5 ${!isSidebarOpen && 'opacity-0'}`}
+            className={`bg-inherit/90 flex flex-col gap-2 lg:gap-5 ${!isSidebarOpen && 'opacity-0'}`}
           >
             {listTitlesAndIdsInOrder.map(
               (

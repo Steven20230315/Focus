@@ -2,12 +2,14 @@ import Datepicker from '../../components/Datepicker';
 import PriorityPicker from '../../components/PriorityPicker';
 import { isValid, parse } from 'date-fns';
 import { FormEvent, useState, useEffect, useRef } from 'react';
+import { useAppSelector, useAppDispatch } from '../../hooks/useHooks';
 import { useDispatch } from 'react-redux';
 import { addTask } from './taskSlice';
-import { ColumnId, ColumnRole, ListId, Priority, Task } from '../../types';
+import { ColumnId, ColumnRole, ListId, Priority, Task, TaskId } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 import useEscapeClose from '../../hooks/useEscapeClose';
 import useCloseOnLoseFocus from '../../hooks/useCloseOnLoseFocus';
+import { createTask } from './taskSlice';
 
 type CreateTaskProps = {
   onMouseEnter: () => void;
@@ -20,15 +22,16 @@ type CreateTaskProps = {
 export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnId, columnRole }: CreateTaskProps) {
   const [title, setTitle] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const userId = useAppSelector((state) => state.user.userId);
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const dueDate = (new FormData(e.currentTarget).get('date') as string) || '0001-01-01';
     const priority = new FormData(e.currentTarget).get('priority') as Priority;
-
+    if (!userId) return;
     if (!title.trim()) return;
 
     if (dueDate) {
@@ -37,19 +40,19 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
       }
     }
     if (dueDate && isValid(parse(dueDate, 'yyyy-MM-dd', new Date()))) {
-      const newTask: Task = {
+      const newTask: Omit<Task, 'taskId'> = {
         title,
         priority,
         listId,
         columnId,
         status: columnRole,
-        taskId: uuidv4(),
-        timeSpend: 0,
+        timeSpent: 0,
         dueDate,
         // In seconds
         pomodoroLength: 1500,
+        userId,
       };
-      dispatch(addTask(newTask));
+      dispatch(createTask(newTask));
     }
     // Create the base task object without dueDate
 

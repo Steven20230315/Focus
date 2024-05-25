@@ -61,8 +61,8 @@ const TaskItem = memo(function TaskItem({ task, index }: TaskItemProps) {
             </div>
             <div className="col-span-6 col-start-6 grid grid-cols-6 place-items-center gap-6 text-center">
               <div className="col-span-2">
-                {Math.floor(task.timeSpend / 60)}:
-                {task.timeSpend % 60 < 10 ? `0${task.timeSpend % 60}` : task.timeSpend % 60}
+                {Math.floor(task.timeSpent / 60)}:
+                {task.timeSpent % 60 < 10 ? `0${task.timeSpent % 60}` : task.timeSpent % 60}
               </div>
               <div className="col-span-2  flex  w-full items-center justify-center rounded-md px-2 py-1 hover:ring  ">
                 <Datepicker onDateSelect={updateDate} date={task.dueDate} />

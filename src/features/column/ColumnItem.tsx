@@ -9,14 +9,20 @@ type ColumnItemProps = {
 };
 import { BsCaretRightFill } from 'react-icons/bs';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { useAppSelector } from '../../hooks/useHooks';
 
 export default function ColumnItem({ index, columnId }: ColumnItemProps) {
+  console.log(columnId);
   const [isTaskListHovered, setIsTaskListHovered] = useState(false);
-  const columnData = useSelector((state: RootState) => state.column.allColumns[columnId]);
+  const columnData = useAppSelector((state) => state.column.allColumns[columnId]);
   const handleMouseEnter = () => setIsTaskListHovered(true);
   const handleMouseLeave = () => setIsTaskListHovered(false);
+  // console.log(columnData);
+
+  if (!columnData) {
+    console.log('columnData is null');
+    return <div>Missing data</div>;
+  }
 
   return (
     // <Draggable draggableId={column.columnId} index={index}>
@@ -31,11 +37,10 @@ export default function ColumnItem({ index, columnId }: ColumnItemProps) {
           <Disclosure>
             {({ open }) => (
               <>
-                <Disclosure.Button className="flex items-center justify-center">
+                <Disclosure.Button className="flex items-center justify-center gap-2 md:gap-3">
                   <BsCaretRightFill className={open ? 'rotate-90 transform' : ''} />
-                  <h3 className="cursor-not-allowed text-center text-2xl  font-bold sm:px-8 sm:text-sm md:text-lg ">
+                  <h3 className="cursor-not-allowed text-center text-base font-bold sm:px-2 sm:text-sm md:text-lg lg:text-2xl ">
                     {columnData.role}
-                    {/* {column.role} */}
                   </h3>
                 </Disclosure.Button>
 
@@ -47,7 +52,7 @@ export default function ColumnItem({ index, columnId }: ColumnItemProps) {
                   leaveFrom="transform scale-100 opacity-100"
                   leaveTo="transform scale-95 opacity-0"
                 >
-                  <Disclosure.Panel className="flex flex-col  text-sm">
+                  <Disclosure.Panel className="flex flex-col text-sm">
                     <TaskList
                       columnId={columnData.columnId}
                       onMouseEnter={handleMouseEnter}

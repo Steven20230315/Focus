@@ -17,12 +17,13 @@ type TaskListProps = React.HTMLAttributes<HTMLDivElement> & {
 
 export default function TaskList({ columnId, onMouseEnter, onMouseLeave }: TaskListProps) {
   const tasks = useSelector(selectTasksInColumn(columnId));
+  console.log(tasks);
   const { setSortBy, sortedTasks, setSortingConfig, isDescending, sortBy } = useSort(tasks);
 
   return (
     <>
       <div className="divide-y-2" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-        <div className=" grid h-fit grid-cols-12 gap-4  py-2 text-start text-lg font-bold sm:text-xs md:text-base">
+        <div className=" grid h-fit grid-cols-12 gap-4 py-2 text-start text-xs font-bold sm:text-sm md:text-base lg:text-lg">
           <div className="col-span-5 flex" onClick={() => setSortBy('default')}>
             name
           </div>

@@ -8,22 +8,38 @@ export const selectAllColumns = (state: RootState) => state.column.allColumns;
 
 export const selectColumnsInUpdatedOrder = createSelector(
   [selectAllLists, selectCurrentListId, selectAllColumns],
-  (allLists: Record<ListId, List>, currentListId: ListId, allColumns: Record<ColumnId, Column>) => {
+  (allLists: Record<ListId, List>, currentListId: ListId | null, allColumns: Record<ColumnId, Column>) => {
+    if (currentListId === null || !allLists[currentListId]) {
+      return [];
+      // return empty array if no current list or currentListId is null
+    }
     const updatedColumnsOrder = allLists[currentListId].columnIds;
-    return updatedColumnsOrder.map((columnId: ColumnId) => {
-      return allColumns[columnId];
-    });
+    return updatedColumnsOrder.map((columnId: ColumnId) => allColumns[columnId]);
   },
 );
 
 export const selectCurrentColumnRole = createSelector(
   [selectAllLists, selectCurrentListId, selectAllColumns],
-  (allList: Record<ListId, List>, currentListId: ListId, allColumns: Record<ColumnId, Column>) => {
-    const currentList = allList[currentListId];
-    if (!currentList) return {};
+  (allList: Record<ListId, List>, currentListId: ListId | null, allColumns: Record<ColumnId, Column>) => {
+    if (
+      currentListId === null ||
+      !allList[currentListId] ||
+      !allList[currentListId].columnIds ||
+      !allColumns ||
+      allList[currentListId].columnIds.length === 0
+    ) {
+      return {};
+      // return empty object if no current list or currentListId is null or currentList does not
+    }
     const currentColumnIds = allList[currentListId].columnIds;
     return currentColumnIds.reduce((acc: Record<ColumnId, ColumnRole>, columnId: ColumnId) => {
-      acc[columnId] = allColumns[columnId].role;
+      if (allColumns[columnId]) {
+        // Ensure the column exists before accessing its 'role'
+        acc[columnId] = allColumns[columnId].role;
+      } else {
+        // Optionally handle the case where the column ID does not exist in allColumns
+        acc[columnId] = 'None'; // or set to undefined, or simply skip setting
+      }
       return acc;
     }, {});
   },
@@ -31,9 +47,11 @@ export const selectCurrentColumnRole = createSelector(
 
 export const selectColumnIdsInCurrentList = createSelector(
   [selectAllLists, selectCurrentListId],
-  (allList: Record<ListId, List>, currentListId: ListId) => {
-    const currentList = allList[currentListId];
-    if (!currentList) return [];
-    return currentList.columnIds;
+  (allList: Record<ListId, List>, currentListId: ListId | null) => {
+    if (currentListId === null || !allList[currentListId]) {
+      return [];
+      // return empty array if no current list or currentListId is null
+    }
+    return allList[currentListId].columnIds;
   },
 );

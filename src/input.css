@@ -10,5 +10,20 @@ body {
 
 #root {
   height: 100vh;
-  min-width: 1080px;
+  min-width: 340px;
+  width: 100vw;
+}
+.loading {
+  font-weight: bold;
+  display:inline-block;
+  font-family: monospace;
+  font-size: 30px;
+  clip-path: inset(0 3ch 0 0);
+  animation: l 1s steps(4) infinite;
+}
+
+@keyframes l {
+  to {
+    clip-path: inset(0 -1ch 0 0)
+  }
 }

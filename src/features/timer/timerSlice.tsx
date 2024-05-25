@@ -17,7 +17,7 @@ export const manageTimer = createAsyncThunk('timer/manageTimer', async (task: Ta
       const { timer: updatedTimer } = getState() as RootState;
       if (updatedTimer.elapsedTime >= updatedTimer.duration) {
         clearInterval(intervalId);
-        dispatch(updateTask({ ...task, timeSpend: task.timeSpend + updatedTimer.elapsedTime }));
+        dispatch(updateTask({ ...task, timeSpent: task.timeSpent + updatedTimer.elapsedTime }));
         dispatch(resetTimer());
       }
     }, 1000);
@@ -31,7 +31,7 @@ export const manageTimer = createAsyncThunk('timer/manageTimer', async (task: Ta
     // console.log('Interrupting current timer to start new one for task:', task.taskId);
     if (timer.intervalId) clearInterval(timer.intervalId);
     if (timer.owner) {
-      dispatch(updateTask({ ...timer.owner, timeSpend: timer.owner.timeSpend + timer.elapsedTime }));
+      dispatch(updateTask({ ...timer.owner, timeSpent: timer.owner.timeSpent + timer.elapsedTime }));
     }
     dispatch(resetTimer());
     startNewTimer(task);
@@ -142,6 +142,7 @@ const timerSlice = createSlice({
     },
     endTimer(state: TimerState) {
       state.isActive = false;
+      state.isRunning = false;
     },
 
     setIntervalId(state: TimerState, action) {

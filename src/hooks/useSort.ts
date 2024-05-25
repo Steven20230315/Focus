@@ -25,9 +25,9 @@ export default function useSort(tasks: Task[]) {
       const bDate = parse(b.dueDate, 'yyyy-MM-dd', new Date());
       if (sortBy === 'timeSpend') {
         if (isDescending) {
-          return b.timeSpend - a.timeSpend;
+          return b.timeSpent - a.timeSpent;
         } else {
-          return a.timeSpend - b.timeSpend;
+          return a.timeSpent - b.timeSpent;
         }
       } else if (sortBy === 'dueDate') {
         if (isDescending) {

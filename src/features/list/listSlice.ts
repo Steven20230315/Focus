@@ -1,47 +1,79 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { type List, type ListId, ListsState, type UpdateListTitlePayload } from '../../types';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { type List, type ListId, ListsState, type UpdateListTitlePayload, type Column } from '../../types';
 import { type DropResult } from '@hello-pangea/dnd';
+import { db } from '../../firebase/firebase-config';
+import { getDocs, collection, addDoc, query, where, doc, runTransaction } from 'firebase/firestore';
+import { createColumn } from '../column/columnSlice';
 // Project slice is responsible for managing projects (CRUD operations)
 // Initial state for projects
-const initialState: ListsState = {
-  allLists: {
-    'cad747f0-671f-4687-8a2a-a5499f3f65b8': {
-      title: 'List 1',
-      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
-      columnIds: [
-        '68c83c43-5b6c-4ddd-8718-9504d724b19e',
-        'a0ef1554-c6d1-447a-8d6d-09a2e475e92d',
-        '3dbbb74b-9988-4c77-ad3d-90ed04a03894',
-        'dd02393d-82ac-4105-8ca6-e4fa282c2321',
-      ],
-    },
-    'e8b1fb51-56fa-4f02-b2cf-3e7faa02e9a7': {
-      title: 'List 2',
-      listId: 'e8b1fb51-56fa-4f02-b2cf-3e7faa02e9a7',
-      columnIds: [
-        '3d95854c-c268-4941-85df-2132ceac0513',
-        '243473a7-7eb9-4e66-bd52-6d2a34214a8d',
-        'dd3e02e6-c386-4de7-b7e2-f3a72fee456f',
-        '5f4d1e8e-8e7e-4f6c-8f2d-0e4e9f9f9f9f',
-      ],
-    },
-    '6d80ab43-79fc-4914-82fc-eb7f0f8562ec': {
-      title: 'List 3',
-      listId: '6d80ab43-79fc-4914-82fc-eb7f0f8562ec',
-      columnIds: [
-        'f00e6163-7972-4842-8b81-225061cb3ae8',
-        'c45d4737-4ced-46c7-ad2b-25e7b01fbd88',
-        '205a1c14-9ccd-44f5-9905-518c8e6a9250',
-        'ae08d0a3-5c97-4071-8e53-ad7995e0a336',
-      ],
-    },
+
+export const deleteList = createAsyncThunk<List, List>('list/deleteList', async (list: List, { rejectWithValue }) => {
+  const columnsRef = collection(db, 'columns');
+  const taskRef = collection(db, 'tasks');
+  const listDocRef = doc(db, 'lists', list.listId);
+  const q = query(columnsRef, where('listId', '==', list.listId));
+  const qTask = query(taskRef, where('listId', '==', list.listId));
+  try {
+    return await runTransaction(db, async (transaction) => {
+      const querySnapshot = await getDocs(q);
+      const querySnapshotTask = await getDocs(qTask);
+      querySnapshotTask.forEach((doc) => {
+        transaction.delete(doc.ref);
+      });
+      querySnapshot.forEach((doc) => {
+        transaction.delete(doc.ref);
+      });
+      transaction.delete(listDocRef);
+
+      return list;
+    });
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+});
+
+export const fetchLists = createAsyncThunk<Record<ListId, List>, string>(
+  'list/fetchLists',
+  async (userId, { rejectWithValue }) => {
+    // TODO: Create a userSlice to manage users.Check if the user is logged in.
+    try {
+      const listCollectionRef = collection(db, 'lists');
+      const q = query(listCollectionRef, where('userId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      // Convert querySnapshot to an Record of List objects
+      const fetchedLists = querySnapshot.docs.reduce(
+        (acc, doc) => {
+          const listData = doc.data() as Omit<List, 'listId'>;
+          acc[doc.id] = { ...listData, listId: doc.id };
+          return acc;
+        },
+        {} as Record<ListId, List>,
+      );
+      return fetchedLists;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
   },
-  listsOrder: [
-    'cad747f0-671f-4687-8a2a-a5499f3f65b8',
-    'e8b1fb51-56fa-4f02-b2cf-3e7faa02e9a7',
-    '6d80ab43-79fc-4914-82fc-eb7f0f8562ec',
-  ],
-  currentListId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
+);
+
+export const createList = createAsyncThunk<List, { title: string; userId: string }>(
+  'list/createList',
+  async ({ title, userId }, { rejectWithValue }) => {
+    try {
+      const ListCollectionRef = collection(db, 'lists');
+      const newList = await addDoc(ListCollectionRef, { title, userId, columnIds: [] });
+      return { title, listId: newList.id, columnIds: [], userId };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+const initialState: ListsState = {
+  status: 'idle',
+  allLists: {},
+  listsOrder: [],
+  currentListId: null,
   isSidebarOpen: true,
 };
 
@@ -56,18 +88,6 @@ const projectSlice = createSlice({
       const newListId = newList.listId;
       state.allLists[newListId] = newList;
       state.listsOrder.push(newList.listId);
-    },
-    deleteList: (state: ListsState, action: PayloadAction<List>) => {
-      const listId = action.payload.listId;
-      if (!(listId in state.allLists)) {
-        throw new Error('The list you want to delete does not exist');
-      }
-      state.listsOrder = state.listsOrder.filter((listId) => listId !== action.payload.listId);
-      // If the deleted list is the current list, change the current list to the first list. Otherwise, the app will crash.
-      if (state.currentListId === listId) {
-        state.currentListId = state.listsOrder[0];
-      }
-      delete state.allLists[listId];
     },
     updateCurrentList: (state: ListsState, action: PayloadAction<List>) => {
       if (!(action.payload.listId in state.allLists)) {
@@ -137,11 +157,79 @@ const projectSlice = createSlice({
       list.title = action.payload.title;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchLists.pending, (state) => {
+        console.log('Fetching lists...');
+        state.status = 'loading';
+      })
+      .addCase(fetchLists.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // If action.payload is an empty object, don't use it to initialize the state
+        if (Object.keys(action.payload).length === 0) return;
+        state.allLists = { ...action.payload };
+        state.listsOrder = Object.keys(action.payload);
+        state.currentListId = state.listsOrder[0];
+      })
+      .addCase(fetchLists.rejected, (state, action) => {
+        state.status = 'failed';
+        console.log(action.error);
+      })
+      .addCase(createList.fulfilled, (state, action) => {
+        console.log('Added a new list');
+        const newList: List = action.payload;
+        state.allLists[newList.listId] = newList;
+        state.listsOrder.push(newList.listId);
+        console.log('Before setting currentListId:', state.currentListId);
+        console.log('State allLists:', state.allLists);
+        console.log('State listsOrder:', state.listsOrder);
+
+        if (state.currentListId === null) {
+          state.currentListId = newList.listId;
+          console.log('Set currentListId to:', state.currentListId);
+        }
+
+        // Additional logging for debugging
+        console.log('After setting currentListId:', state.currentListId);
+      })
+      .addCase(createList.rejected, (state, action) => {
+        state.status = 'failed';
+        console.log(action.error);
+      })
+      .addCase(createList.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(createColumn.fulfilled, (state, action: PayloadAction<Column>) => {
+        const { listId, columnId } = action.payload;
+        if (!(listId in state.allLists)) {
+          throw new Error('The list you want to update does not exist');
+        }
+        state.allLists[listId].columnIds.push(columnId);
+      })
+      .addCase(deleteList.fulfilled, (state, action) => {
+        const deleteDlistId = action.payload.listId;
+        if (!(deleteDlistId in state.allLists)) {
+          throw new Error('The list you want to delete does not exist');
+        }
+        state.listsOrder = state.listsOrder.filter((listId) => listId !== deleteDlistId);
+        // If the deleted list is the current list, change the current list to the first list. Otherwise, the app will crash.
+        if (state.currentListId === deleteDlistId) {
+          state.currentListId = state.listsOrder[0];
+        }
+        delete state.allLists[deleteDlistId];
+      })
+      .addCase(deleteList.rejected, (state, action) => {
+        state.status = 'failed';
+        console.log(action.error);
+      })
+      .addCase(deleteList.pending, (state) => {
+        state.status = 'loading';
+      });
+  },
 });
 
 export const {
   addListWithDefaultColumns,
-  deleteList,
   updateCurrentList,
   setCurrentList,
   updateListsOrder,

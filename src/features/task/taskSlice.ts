@@ -1,8 +1,65 @@
-import { createSlice, type PayloadAction, type ActionReducerMapBuilder } from '@reduxjs/toolkit';
-import { type TaskId, type Task, type ColumnId } from '../../types';
+import { createSlice, type PayloadAction, type ActionReducerMapBuilder, createAsyncThunk } from '@reduxjs/toolkit';
+import { type TaskId, type Task, type ColumnId, type Column } from '../../types';
 import { updateTaskOwner } from '../column/columnSlice';
 import { DropResultWithRole } from '../column/columnSlice';
+import { db } from '../../firebase/firebase-config';
+import { collection, runTransaction, addDoc, doc, query, where, getDocs } from 'firebase/firestore';
 // TODO: This is only a temporary type definition. For testing purposes.
+
+type CreateTaskPayload = Omit<Task, 'taskId'>;
+
+export const fetchTasks = createAsyncThunk<Record<TaskId, Task>, string>(
+  'task/fetchTasks',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const taskCollectionRef = collection(db, 'tasks');
+      const q = query(taskCollectionRef, where('userId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      // Convert querySnapshot to an Record of Task objects
+      const fetchedTasks = querySnapshot.docs.reduce(
+        (acc, doc) => {
+          const taskData = doc.data() as Omit<Task, 'taskId'>;
+          acc[doc.id] = { ...taskData, taskId: doc.id };
+          return acc;
+        },
+        {} as Record<TaskId, Task>,
+      );
+      return fetchedTasks;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const createTask = createAsyncThunk<Task, CreateTaskPayload>(
+  'task/createTask',
+  async (task: CreateTaskPayload, { rejectWithValue }) => {
+    const columnRef = doc(db, 'columns', task.columnId);
+    const taskCollectionRef = collection(db, 'tasks');
+    console.log(task);
+    try {
+      return await runTransaction(db, async (transaction) => {
+        console.log('Creating task: ', task);
+        const newTaskRef = await addDoc(taskCollectionRef, task);
+        console.log(newTaskRef.id);
+        console.log(newTaskRef);
+        const columnSnap = await transaction.get(columnRef);
+        if (!columnSnap.exists()) {
+          throw new Error('Column not found');
+        }
+
+        const columnData = columnSnap.data() as Omit<Column, 'columnId'>;
+        const updatedTaskIds = [...columnData.taskIds, newTaskRef.id];
+        console.log('ready to update column');
+        transaction.update(columnRef, { taskIds: updatedTaskIds });
+
+        return { ...task, taskId: newTaskRef.id } as Task;
+      });
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
 
 interface TaskState {
   allTasks: Record<TaskId, Task>;
@@ -17,41 +74,7 @@ export type DeleteTaskPayload = {
 };
 
 const initialState: TaskState = {
-  allTasks: {
-    '44f64636-1240-47df-af28-69a2f0666358': {
-      taskId: '44f64636-1240-47df-af28-69a2f0666358',
-      title: 'Task 1',
-      columnId: '68c83c43-5b6c-4ddd-8718-9504d724b19e',
-      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
-      status: 'To Do',
-      priority: 'Low',
-      dueDate: '2022-01-21',
-      timeSpend: 0,
-      pomodoroLength: 15,
-    },
-    '6b24381f-ac0f-4e6f-9fef-c63be4fb6e9b': {
-      taskId: '6b24381f-ac0f-4e6f-9fef-c63be4fb6e9b',
-      title: 'Task 1',
-      columnId: '68c83c43-5b6c-4ddd-8718-9504d724b19e',
-      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
-      status: 'To Do',
-      priority: 'Normal',
-      dueDate: '2024-07-07',
-      timeSpend: 1500,
-      pomodoroLength: 15,
-    },
-    '499a2cac-d874-4e30-bc36-d800449ccbcc': {
-      taskId: '499a2cac-d874-4e30-bc36-d800449ccbcc',
-      title: 'Task 1',
-      columnId: '68c83c43-5b6c-4ddd-8718-9504d724b19e',
-      listId: 'cad747f0-671f-4687-8a2a-a5499f3f65b8',
-      status: 'To Do',
-      priority: 'Urgent',
-      dueDate: '2025-01-14',
-      timeSpend: 3000,
-      pomodoroLength: 15,
-    },
-  },
+  allTasks: {},
 };
 
 const taskSlice = createSlice({
@@ -81,11 +104,36 @@ const taskSlice = createSlice({
     },
   },
   extraReducers: (builder: ActionReducerMapBuilder<TaskState>) => {
-    builder.addCase(updateTaskOwner, (state: TaskState, action: PayloadAction<DropResultWithRole>) => {
-      const { destination, draggableId, newRole } = action.payload;
-      state.allTasks[draggableId].columnId = destination!.droppableId;
-      state.allTasks[draggableId].status = newRole;
-    });
+    builder
+      .addCase(updateTaskOwner, (state: TaskState, action: PayloadAction<DropResultWithRole>) => {
+        const { destination, draggableId, newRole } = action.payload;
+        state.allTasks[draggableId].columnId = destination!.droppableId;
+        state.allTasks[draggableId].status = newRole;
+      })
+      .addCase(createTask.fulfilled, (state: TaskState, action: PayloadAction<Task>) => {
+        const { taskId } = action.payload;
+        state.allTasks[taskId] = action.payload;
+        console.log('Task created successfully');
+      })
+      .addCase(createTask.rejected, (state, action) => {
+        console.log(state.allTasks);
+        console.log(action.error);
+        console.log('Task creation failed');
+      })
+      .addCase(createTask.pending, () => {
+        console.log('Creating task...');
+      })
+      .addCase(fetchTasks.fulfilled, (state: TaskState, action: PayloadAction<Record<TaskId, Task>>) => {
+        state.allTasks = action.payload;
+        console.log('Tasks fetched successfully');
+      })
+      .addCase(fetchTasks.rejected, (state, action) => {
+        console.log(action.error);
+        console.log(state);
+      })
+      .addCase(fetchTasks.pending, () => {
+        console.log('Fetching tasks...');
+      });
   },
 });
 

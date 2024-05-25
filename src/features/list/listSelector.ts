@@ -2,17 +2,28 @@ import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../../store';
 import type { List, ListId } from '../../types';
 
-export const selectCurrentListId = (state: RootState) => state.list.currentListId;
+export const selectCurrentListId = (state: RootState): ListId | null => state.list.currentListId;
 
 export const selectAllLists = (state: RootState) => state.list.allLists;
 
 export const selectAllListIDsInOrder = (state: RootState) => state.list.listsOrder;
 
-export const currentListDetails = (state: RootState) => state.list.allLists[state.list.currentListId];
+export const currentListDetails = (state: RootState): List | null => {
+  // Check if currentListId is not null and is a valid key in allLists
+  const currentListId = state.list.currentListId;
+  if (currentListId && state.list.allLists[currentListId]) {
+    return state.list.allLists[currentListId];
+  }
+  // Return null or an appropriate default value if currentListId is null or not found
+  return null;
+};
 
 export const getCurrentListDetails = createSelector(
   [selectAllLists, selectCurrentListId],
-  (allList: Record<ListId, List>, currentListId: ListId) => {
+  (allList: Record<ListId, List>, currentListId: ListId | null) => {
+    if (!currentListId || !allList[currentListId]) {
+      return null; // or return {} or any other default object as per your UI handling
+    }
     return {
       listTitle: allList[currentListId].title,
       listId: allList[currentListId].listId,
@@ -20,15 +31,13 @@ export const getCurrentListDetails = createSelector(
   },
 );
 
-export const getCurrentListIdAndTitle = createSelector(
+export const getCurrentListTitle = createSelector(
   [selectAllLists, selectCurrentListId],
-  (allList: Record<ListId, List>, currentListId: ListId) => {
-    // This will be reevaluated when allList or currentListId changes
-
-    return {
-      listId: allList[currentListId].listId,
-      listTitle: allList[currentListId].title,
-    };
+  (allList: Record<ListId, List>, currentListId: ListId | null) => {
+    if (!currentListId || !allList[currentListId]) {
+      return 'No List Selected'; // Provide default values
+    }
+    return allList[currentListId].title;
   },
 );
 
@@ -41,18 +50,6 @@ export const getAllListTitlesAndIdsInOrder = createSelector(
         listTitle: allList[listId].title,
       };
     });
-  },
-);
-
-export const selectCurrentListDetails = createSelector(
-  [selectAllLists, selectCurrentListId],
-  (allList: Record<ListId, List>, currentListId: ListId) => {
-    // Check if the current list ID exists in the allLists record
-    const list = allList[currentListId];
-    if (!list) {
-      return null;
-    }
-    return list.title;
   },
 );
 

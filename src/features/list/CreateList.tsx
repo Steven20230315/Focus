@@ -1,18 +1,21 @@
 import { type FormEvent, useState, useRef, useEffect } from 'react';
-import { createNewListWithDefaultColumns } from '../../utils/createNewList';
-import { useDispatch, useSelector } from 'react-redux';
-import { addListWithDefaultColumns } from './listSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks/useHooks';
 import { selectAllListTitles } from './listSelector';
 import useCloseOnLoseFocus from '../../hooks/useCloseOnLoseFocus';
 import useEscapeClose from '../../hooks/useEscapeClose';
-
+import useScreenSize from '../../hooks/useScreenSize';
+import { createList } from './listSlice';
+import Modal from '../../components/Modal';
 export default function CreateList() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const listTitles = useSelector(selectAllListTitles);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const listTitles = useAppSelector(selectAllListTitles);
   const [title, setTitle] = useState('');
   const [labelMessage, setLabelMessage] = useState('Enter list title');
+  const { width } = useScreenSize();
+  const userId = useAppSelector((state) => state.user.userId);
   useEffect(() => {
     const listExists = listTitles.includes(title);
     setLabelMessage(listExists ? 'List already exists' : 'Enter list title');
@@ -25,12 +28,15 @@ export default function CreateList() {
     if (!trimTitle) {
       console.log('Please enter a title');
       return;
+    } else if (trimTitle.length < 3) {
+      setLabelMessage('Title must be at least 3 characters');
+      return;
     }
     if (listTitles.includes(trimTitle)) {
       setLabelMessage('List already exists');
       return;
     }
-    dispatch(addListWithDefaultColumns(createNewListWithDefaultColumns(trimTitle)));
+    if (userId) dispatch(createList({ title: trimTitle, userId: userId }));
     setTitle(''); // Reset title state instead of using form reset
     setIsOpen(false);
   };
@@ -40,9 +46,14 @@ export default function CreateList() {
 
   return (
     <div className="mt-4 cursor-pointer" ref={ref}>
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} setIsOpen={() => setIsModalOpen(false)}>
+          <p>Modal</p>
+        </Modal>
+      )}
       {!isOpen ? (
-        <button type="button" onClick={() => setIsOpen(true)} className="ml-2">
-          + Create List
+        <button type="button" onClick={() => setIsOpen(true)} className="ml-2 text-sm">
+          {width && width < 640 ? '+' : '+ Create List'}
         </button>
       ) : (
         <form onSubmit={onSubmit} autoComplete="off" className="mt-4">
@@ -55,6 +66,9 @@ export default function CreateList() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="peer rounded-md px-2 py-1 text-slate-600 focus:outline-none"
+              autoFocus={isOpen}
+              placeholder="Enter title (min 3 characters)"
+              // minLength={3}
             />
             <label
               htmlFor="title"

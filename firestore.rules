@@ -1,0 +1,91 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /lists/{listId}{
+      allow create: if request.auth.uid != null && 
+      // title is a string and can not be empty
+      request.resource.data.title is string && 
+      request.resource.data.title.size() >= 3 && 
+      request.resource.data.columnIds != null &&
+      request.resource.data.columnIds is list&&
+      // list must has a userId field and equal to auth.uid
+      request.resource.data.userId != null &&
+      request.resource.data.userId == request.auth.uid;
+      allow update: if request.auth.uid != null &&
+      request.resource.data.userId == request.auth.uid &&
+      resource.data.userId == request.auth.uid;
+      allow delete: if request.auth.uid != null &&
+      resource.data.userId == request.auth.uid;
+      allow delete,read: if request.auth != null;
+    }
+    match /columns/{columnId}{
+      function isColumnDataComplete(){
+        return ("listId" in request.resource.data)&&
+        ("userId" in request.resource.data)&&
+        ("title" in request.resource.data)&&
+        ("taskIds" in request.resource.data)&&
+        ("role" in request.resource.data);
+      }
+      allow create: if request.auth.uid != null && 
+      isColumnDataComplete()&&
+      // Make sure a 'users' document exitst for the requesting user before creating a new column
+      exists(/databases/$(database)/documents/users/$(request.auth.uid))&&
+      // title field is required and must be longer than 3
+      request.resource.data.title is string && 
+      request.resource.data.title.size() > 3 &&
+      // listId field is required. Right now, it's a string, not a reference. 
+      exists(/databases/$(database)/documents/lists/$(request.resource.data.listId))&&
+      request.resource.data.userId == request.auth.uid &&
+      // role field is required and must be one of the five options
+      request.resource.data.role in ['To Do','In Progress','Done','Pending','None'] &&
+      request.resource.data.taskIds is list;
+      allow update: if request.auth.uid != null;
+      allow read: if request.auth.uid != null;
+      allow delete: if request.auth.uid != null && 
+      resource.data.userId == request.auth.uid && 
+      exists(/databases/$(database)/documents/lists/$(resource.data.listId));
+    }
+    match /tasks/{taskId}{
+      function isTaskDataComplete(){
+        return ("listId" in request.resource.data)&&
+        ("userId" in request.resource.data)&&
+        ("title" in request.resource.data)&&
+        ("columnId" in request.resource.data) &&
+        ("dueDate" in request.resource.data) &&
+        ("priority" in request.resource.data) &&
+        ("timeSpent" in request.resource.data) &&
+        ("pomodoroLength" in request.resource.data) &&
+        ("status" in request.resource.data);
+      }
+      allow create: if request.auth.uid != null&&
+      isTaskDataComplete()&&
+      exists(/databases/$(database)/documents/users/$(request.auth.uid))&&
+      request.resource.data.userId == request.auth.uid &&
+      request.resource.data.title is string &&
+      request.resource.data.title.size() > 5 &&
+      request.resource.data.listId != null &&
+      exists(/databases/$(database)/documents/lists/$(request.resource.data.listId))&&
+      request.resource.data.columnId != null &&
+      exists(/databases/$(database)/documents/columns/$(request.resource.data.columnId))&&
+      request.resource.data.status in ['To Do','In Progress','Done','Pending','None'] &&
+      request.resource.data.priority in ["Low","Normal","High","Urgent"] &&
+      request.resource.data.dueDate != null &&
+      request.resource.data.timeSpent is number &&
+      request.resource.data.pomodoroLength !=null &&
+      request.resource.data.pomodoroLength is number;
+
+      allow update: if request.auth.uid != null &&
+      request.resource.data.userId == request.auth.uid &&
+      resource.data.userId == request.auth.uid;
+      allow delete: if request.auth.uid != null &&
+      resource.data.userId == request.auth.uid;
+      allow delete,read: if request.auth != null;
+    }
+    match /users/{userId}{
+      allow create:if true;
+      allow update,delete,read: if request.auth.id != null &&
+      request.auth.id == userId;
+    }
+  }
+}
