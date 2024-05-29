@@ -180,9 +180,6 @@ const projectSlice = createSlice({
         const newList: List = action.payload;
         state.allLists[newList.listId] = newList;
         state.listsOrder.push(newList.listId);
-        console.log('Before setting currentListId:', state.currentListId);
-        console.log('State allLists:', state.allLists);
-        console.log('State listsOrder:', state.listsOrder);
 
         if (state.currentListId === null) {
           state.currentListId = newList.listId;
@@ -207,16 +204,16 @@ const projectSlice = createSlice({
         state.allLists[listId].columnIds.push(columnId);
       })
       .addCase(deleteList.fulfilled, (state, action) => {
-        const deleteDlistId = action.payload.listId;
-        if (!(deleteDlistId in state.allLists)) {
+        const deletedListId = action.payload.listId;
+        if (!(deletedListId in state.allLists)) {
           throw new Error('The list you want to delete does not exist');
         }
-        state.listsOrder = state.listsOrder.filter((listId) => listId !== deleteDlistId);
+        state.listsOrder = state.listsOrder.filter((listId) => listId !== deletedListId);
         // If the deleted list is the current list, change the current list to the first list. Otherwise, the app will crash.
-        if (state.currentListId === deleteDlistId) {
+        if (state.currentListId === deletedListId) {
           state.currentListId = state.listsOrder[0];
         }
-        delete state.allLists[deleteDlistId];
+        delete state.allLists[deletedListId];
       })
       .addCase(deleteList.rejected, (state, action) => {
         state.status = 'failed';

@@ -25,7 +25,7 @@ export default function Sidebar() {
         leave="transition-opacity ease-linear duration-300"
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
-        className="absolute inset-y-0 left-[25px] z-10 flex w-[100px] flex-col bg-gray-600 shadow-lg "
+        className="transition-duration-300 absolute inset-y-0 left-[25px] z-10 flex w-[100px] flex-col bg-gray-600 pl-3 shadow-lg transition-width sm:w-[150px] md:w-[200px] "
       >
         <div className="p-2">
           <LinkList />

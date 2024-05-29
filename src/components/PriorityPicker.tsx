@@ -10,8 +10,6 @@ type PriorityPickerProps = {
 };
 
 export default function PriorityPicker({ priority: priorityProp, onPrioritySelect }: PriorityPickerProps) {
-  // const priorities = ['Urgen', 'High', 'Normal', 'Low'];
-
   const [priority, setPriority] = useState<Priority | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 

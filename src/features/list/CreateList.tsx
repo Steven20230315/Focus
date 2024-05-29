@@ -13,20 +13,24 @@ export default function CreateList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const listTitles = useAppSelector(selectAllListTitles);
   const [title, setTitle] = useState('');
-  const [labelMessage, setLabelMessage] = useState('Enter list title');
+  const [labelMessage, setLabelMessage] = useState('Enter title');
   const { width } = useScreenSize();
   const userId = useAppSelector((state) => state.user.userId);
   useEffect(() => {
     const listExists = listTitles.includes(title);
-    setLabelMessage(listExists ? 'List already exists' : 'Enter list title');
+    setLabelMessage(listExists ? 'List already exists' : 'Enter title');
   }, [listTitles, title]);
+
+  useEffect(() => {
+    if (!isOpen) setTitle('');
+  }, [isOpen]);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const trimTitle = title.trim();
     if (!trimTitle) {
-      console.log('Please enter a title');
+      setLabelMessage('Please enter a title');
       return;
     } else if (trimTitle.length < 3) {
       setLabelMessage('Title must be at least 3 characters');
@@ -39,20 +43,41 @@ export default function CreateList() {
     if (userId) dispatch(createList({ title: trimTitle, userId: userId }));
     setTitle(''); // Reset title state instead of using form reset
     setIsOpen(false);
+    setIsModalOpen(false);
   };
 
   useCloseOnLoseFocus(ref, isOpen, setIsOpen);
   useEscapeClose(isOpen, setIsOpen);
 
+  const handleOpenForm = () => {
+    if (width && width < 640) {
+      setIsModalOpen(true);
+    } else {
+      setIsOpen(true);
+    }
+  };
+
   return (
     <div className="mt-4 cursor-pointer" ref={ref}>
       {isModalOpen && (
-        <Modal isOpen={isModalOpen} setIsOpen={() => setIsModalOpen(false)}>
-          <p>Modal</p>
+        <Modal setIsOpen={() => setIsModalOpen(false)}>
+          <form action="" onSubmit={onSubmit} autoComplete="off" className="mt-4 flex flex-col gap-3">
+            <label htmlFor="title">{labelMessage}</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              autoFocus={isModalOpen}
+              className="rounded-md border border-slate-300 px-2 py-1 text-slate-600 focus:outline-none"
+            />
+          </form>
         </Modal>
       )}
+
       {!isOpen ? (
-        <button type="button" onClick={() => setIsOpen(true)} className="ml-2 text-sm">
+        <button type="button" onClick={handleOpenForm} className="ml-2 text-sm">
           {width && width < 640 ? '+' : '+ Create List'}
         </button>
       ) : (
@@ -65,10 +90,9 @@ export default function CreateList() {
               name="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="peer rounded-md px-2 py-1 text-slate-600 focus:outline-none"
+              className="peer w-[90%] rounded-md px-2 py-1 text-slate-600 focus:outline-none"
               autoFocus={isOpen}
-              placeholder="Enter title (min 3 characters)"
-              // minLength={3}
+              placeholder="Enter title"
             />
             <label
               htmlFor="title"

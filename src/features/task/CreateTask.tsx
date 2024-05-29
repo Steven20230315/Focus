@@ -3,10 +3,7 @@ import PriorityPicker from '../../components/PriorityPicker';
 import { isValid, parse } from 'date-fns';
 import { FormEvent, useState, useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks/useHooks';
-import { useDispatch } from 'react-redux';
-import { addTask } from './taskSlice';
-import { ColumnId, ColumnRole, ListId, Priority, Task, TaskId } from '../../types';
-import { v4 as uuidv4 } from 'uuid';
+import { ColumnId, ColumnRole, ListId, Priority, Task } from '../../types';
 import useEscapeClose from '../../hooks/useEscapeClose';
 import useCloseOnLoseFocus from '../../hooks/useCloseOnLoseFocus';
 import { createTask } from './taskSlice';
@@ -92,7 +89,7 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             ref={inputRef}
-            className="boder-white w-1/2 appearance-none bg-transparent text-black placeholder-black/50 focus:opacity-90 focus:outline-none  "
+            className="w-1/2 appearance-none border-white bg-transparent text-black placeholder-black/50 focus:opacity-90 focus:outline-none  "
           />
           <div className=" flex min-w-0 flex-1 items-center gap-3 ">
             <div className="flex gap-2">

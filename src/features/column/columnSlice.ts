@@ -106,9 +106,11 @@ const columnSlice = createSlice({
     },
     updateTasksOrderInColumn(state: ColumnState, action: PayloadAction<DropResult>) {
       const { source, destination, draggableId } = action.payload;
-      const sourceColumn = state.allColumns[source.droppableId];
-
-      const destinationColumn = state.allColumns[destination!.droppableId];
+      const sourceColumnId = source.droppableId.split('-')[1];
+      const sourceColumn = state.allColumns[sourceColumnId];
+      if (!destination) return;
+      const destinationColumnId = destination.droppableId.split('-')[1];
+      const destinationColumn = state.allColumns[destinationColumnId];
       if (!(sourceColumn.columnId in state.allColumns)) {
         throw new Error('The source column does not exit in allColumns');
       }
@@ -126,13 +128,29 @@ const columnSlice = createSlice({
       }
       const oldIndex = source.index;
       const newIndex = destination.index;
-      const [remove] = state.allColumns[source.droppableId].taskIds.splice(oldIndex, 1);
-      state.allColumns[destination.droppableId].taskIds.splice(newIndex, 0, remove);
+      const [remove] = state.allColumns[sourceColumnId].taskIds.splice(oldIndex, 1);
+      state.allColumns[destinationColumnId].taskIds.splice(newIndex, 0, remove);
     },
-    updateTaskOwner(state: ColumnState, action: PayloadAction<DropResultWithRole>) {
+    updateTaskOwner(state: ColumnState, action: PayloadAction<DropResult>) {
       const { source, destination } = action.payload;
-      const currentColumn = state.allColumns[source.droppableId];
-      const newColumn = state.allColumns[destination!.droppableId];
+      if (!destination) {
+        console.log('No destination');
+        return;
+      }
+      const oldColumnId = source.droppableId.split('-')[1];
+      const [columnRole, columnId] = destination.droppableId.split('-') as [ColumnRole, ColumnId];
+      console.log('columnRole, columnId', columnRole, columnId);
+      const currentColumn = state.allColumns[oldColumnId];
+      if (!currentColumn) {
+        throw new Error('The destination column does not exit in allColumns');
+      }
+
+      console.log('This works', source, destination);
+      const newColumn = state.allColumns[columnId];
+      console.log('newColumn', newColumn);
+      if (!newColumn) {
+        throw new Error('The destination column does not exit in allColumns');
+      }
       const [remove] = currentColumn.taskIds.splice(source.index, 1);
       newColumn.taskIds.push(remove);
       // newColumn.taskIds.splice(destination!.index, 0, remove);

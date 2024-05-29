@@ -17,7 +17,7 @@ export default function ColumnItem({ index, columnId }: ColumnItemProps) {
   const columnData = useAppSelector((state) => state.column.allColumns[columnId]);
   const handleMouseEnter = () => setIsTaskListHovered(true);
   const handleMouseLeave = () => setIsTaskListHovered(false);
-  // console.log(columnData);
+  console.log(columnData);
 
   if (!columnData) {
     console.log('columnData is null');
@@ -55,6 +55,7 @@ export default function ColumnItem({ index, columnId }: ColumnItemProps) {
                   <Disclosure.Panel className="flex flex-col text-sm">
                     <TaskList
                       columnId={columnData.columnId}
+                      columnRole={columnData.role}
                       onMouseEnter={handleMouseEnter}
                       onMouseLeave={handleMouseLeave}
                     />

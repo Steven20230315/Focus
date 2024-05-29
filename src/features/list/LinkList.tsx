@@ -22,7 +22,7 @@ export default function LinkList() {
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`bg-inherit/90 flex flex-col gap-2 lg:gap-5 ${!isSidebarOpen && 'opacity-0'}`}
+            className={`bg-inherit/90 mb-6 flex w-[90%] flex-col gap-2 lg:gap-5 ${!isSidebarOpen && 'opacity-0'}`}
           >
             {listTitlesAndIdsInOrder.map(
               (
@@ -32,7 +32,6 @@ export default function LinkList() {
                 },
                 index: number,
               ) => (
-                // Assuming Link component takes listId and listTitle as props
                 <Link key={list.listId} listId={list.listId!} index={index} listTitle={list.listTitle!} />
               ),
             )}

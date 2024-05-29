@@ -19,6 +19,7 @@ export default function Login() {
       const docRef = await addDoc(collection(db, 'users'), {
         uid: user.user.uid,
         email: user.user.email,
+        listIds: [],
       });
 
       console.log('Document written with ID: ', docRef.id);

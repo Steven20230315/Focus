@@ -1,6 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { auth } from '../../firebase/firebase-config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { ListId } from '../../types';
+
+export type User = {
+  uid: string;
+  email: string;
+  listIds: ListId[];
+};
 
 type UserState = {
   userId: string | undefined | null;

@@ -17,7 +17,7 @@ import {
   isValid,
 } from 'date-fns';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import useScreenSize from '../hooks/useScreenSize';
+// import useScreenSize from '../hooks/useScreenSize';
 
 type DatePickerProps = {
   onDateSelect?: (date: Date) => void;
@@ -26,10 +26,10 @@ type DatePickerProps = {
 
 export default function Datepicker({ onDateSelect, date: dateProp }: DatePickerProps) {
   const today = startOfDay(new Date());
-  const { width } = useScreenSize();
+  // const { width } = useScreenSize();
 
   // When dateProp is provided but its not a valid date, it defaults to "0001-01-01". This ensure selectedDay is always a valid date
-  // However, this means the consumer of this component won't know it provid a invalid date.
+  // However, this means the consumer of this component won't know it provide a invalid date.
   const [selectedDay, setSelectedDay] = useState<Date>(() => {
     const parsedDate = parse(dateProp || '0001-01-01', 'yyyy-MM-dd', new Date());
     return isValid(parsedDate) ? parsedDate : parse('0001-01-01', 'yyyy-MM-dd', new Date());
@@ -98,12 +98,14 @@ export default function Datepicker({ onDateSelect, date: dateProp }: DatePickerP
 
   function renderCalendarButton(open: boolean) {
     const fallbackDate = '0001-01-01'; // Constant for fallback date
-    const isMobile = width && width < 768;
-    const dateFormat = isMobile ? 'MMM-dd' : 'MMMM dd, yyyy';
-    const formatedSelectedDay = format(selectedDay, dateFormat);
+    // const isMobile = width && width < 768;
+    // TODO: Mobile support
+    // const dateFormat = isMobile ? 'MMM-dd' : 'MMMM dd, yyyy';
+    const formattedSelectedDay = format(selectedDay, 'yyyy-MM-dd');
     // Determine whether to use LuCalendar or LuCalendarPlus.
-    // Only use LuCalendarPlus whne there is no valid date and datepicker it closed
-    const hasValidDate = (dateProp && dateProp !== fallbackDate) || formatedSelectedDay !== fallbackDate;
+    // Only use LuCalendarPlus when there is no valid date and datepicker it closed
+    const hasValidDate = (dateProp && dateProp !== fallbackDate) || formattedSelectedDay !== fallbackDate;
+    console.log(hasValidDate);
     const useLuCalendar = open || hasValidDate;
     const CalendarIcon = useLuCalendar ? LuCalendar : LuCalendarPlus;
 
@@ -112,14 +114,15 @@ export default function Datepicker({ onDateSelect, date: dateProp }: DatePickerP
     if (dateProp && dateProp !== fallbackDate) {
       // Use day prop if it's valid
       displayDate = dateProp;
-    } else if (!dateProp && formatedSelectedDay !== fallbackDate) {
-      // Use formatedSelectedDay if it's valid and dateProp isn't
-      displayDate = formatedSelectedDay;
+    } else if (!dateProp && formattedSelectedDay !== fallbackDate) {
+      // Use formattedSelectedDay if it's valid and dateProp isn't
+      displayDate = formattedSelectedDay;
     }
+    console.log(displayDate);
     return (
       <>
         <CalendarIcon className="h-5 w-5 text-white" />
-        {displayDate && <div>{format(displayDate, dateFormat)}</div>}
+        {displayDate && <div>{format(displayDate, 'yyyy-MM-dd')}</div>}
       </>
     );
   }

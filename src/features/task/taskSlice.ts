@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction, type ActionReducerMapBuilder, createAsyncThunk } from '@reduxjs/toolkit';
-import { type TaskId, type Task, type ColumnId, type Column } from '../../types';
+import { type TaskId, type Task, type ColumnId, type Column, type ColumnRole } from '../../types';
 import { updateTaskOwner } from '../column/columnSlice';
-import { DropResultWithRole } from '../column/columnSlice';
+import { DropResult } from '@hello-pangea/dnd';
 import { db } from '../../firebase/firebase-config';
 import { collection, runTransaction, addDoc, doc, query, where, getDocs } from 'firebase/firestore';
 // TODO: This is only a temporary type definition. For testing purposes.
@@ -105,10 +105,13 @@ const taskSlice = createSlice({
   },
   extraReducers: (builder: ActionReducerMapBuilder<TaskState>) => {
     builder
-      .addCase(updateTaskOwner, (state: TaskState, action: PayloadAction<DropResultWithRole>) => {
-        const { destination, draggableId, newRole } = action.payload;
-        state.allTasks[draggableId].columnId = destination!.droppableId;
-        state.allTasks[draggableId].status = newRole;
+      .addCase(updateTaskOwner, (state: TaskState, action: PayloadAction<DropResult>) => {
+        const { destination, draggableId } = action.payload;
+        if (!destination) return;
+        const [columnRole, columnId] = destination.droppableId.split('-') as [ColumnRole, ColumnId];
+        console.log(columnRole, columnId);
+        state.allTasks[draggableId].columnId = columnId;
+        state.allTasks[draggableId].status = columnRole;
       })
       .addCase(createTask.fulfilled, (state: TaskState, action: PayloadAction<Task>) => {
         const { taskId } = action.payload;

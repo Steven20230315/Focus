@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ColumnId, Task } from '../../types';
+import type { ColumnId, ColumnRole, Task } from '../../types';
 import TaskItem from './TaskItem';
 import { useSelector } from 'react-redux';
 import { Droppable, type DroppableProvided } from '@hello-pangea/dnd';
@@ -7,19 +7,18 @@ import { selectTasksInColumn } from './TaskSelector';
 import useSort from '../../hooks/useSort';
 import { LuArrowBigUp } from 'react-icons/lu';
 import { LuArrowBigDown } from 'react-icons/lu';
-// import { FiPlusCircle } from 'react-icons/fi';
+import { useAppSelector } from '../../hooks/useHooks';
 
 type TaskListProps = React.HTMLAttributes<HTMLDivElement> & {
   columnId: ColumnId;
+  columnRole: ColumnRole;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 };
 
-export default function TaskList({ columnId, onMouseEnter, onMouseLeave }: TaskListProps) {
+export default function TaskList({ columnId, onMouseEnter, onMouseLeave, columnRole }: TaskListProps) {
   const tasks = useSelector(selectTasksInColumn(columnId));
-  console.log(tasks);
   const { setSortBy, sortedTasks, setSortingConfig, isDescending, sortBy } = useSort(tasks);
-
   return (
     <>
       <div className="divide-y-2" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
@@ -56,7 +55,7 @@ export default function TaskList({ columnId, onMouseEnter, onMouseLeave }: TaskL
             </div> */}
           </div>
         </div>
-        <Droppable droppableId={columnId} type="task">
+        <Droppable droppableId={`${columnRole}-${columnId}`} type="task">
           {(provided: DroppableProvided) => (
             <div
               ref={provided.innerRef}
