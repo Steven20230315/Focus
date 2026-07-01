@@ -1,9 +1,9 @@
-import { defineConfig } from "npm-check-updates";
+import { defineConfig } from 'npm-check-updates';
 
 export default defineConfig({
-  target: "latest",
+  target: 'latest',
   upgrade: true,
-  cooldown: "7d",
-  packageManager: "pnpm",
+  cooldown: '7d',
+  packageManager: 'pnpm',
   filter: [/.*/],
 });
