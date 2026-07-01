@@ -19,7 +19,7 @@ export default function View() {
       leave="transition ease-in duration-400"
       leaveFrom="transform translate-x-0 opacity-100"
       leaveTo="transform -translate-x-full opacity-0"
-      className="item-center relative flex  grow flex-col gap-6  p-6"
+      className="item-center relative flex grow flex-col gap-6 p-6"
     >
       <h2 className="text-center text-7xl font-bold"> {title ? title : 'Create a list to get started!'}</h2>
       {title && <ColumnList />}

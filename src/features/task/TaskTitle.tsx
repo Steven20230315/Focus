@@ -20,7 +20,7 @@ export default function Checkbox2({ taskId, title, columnId }: CheckboxProps) {
           id={taskId}
           className="peer h-full w-full appearance-none rounded-full border border-black checked:border-2 hover:border hover:opacity-70"
         />
-        <IoCheckmark className="absolute hidden  text-sm text-black peer-checked:block peer-hover:block peer-hover:opacity-70" />
+        <IoCheckmark className="absolute hidden text-sm text-black peer-checked:block peer-hover:block peer-hover:opacity-70" />
       </div>
       <label htmlFor={taskId} className="text-md font-medium">
         {title}

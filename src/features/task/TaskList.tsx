@@ -22,14 +22,14 @@ export default function TaskList({ columnId, onMouseEnter, onMouseLeave }: TaskL
   return (
     <>
       <div className="divide-y-2" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-        <div className=" grid h-fit grid-cols-12 gap-4  py-2 text-start text-lg font-bold sm:text-xs md:text-base">
+        <div className="grid h-fit grid-cols-12 gap-4 py-2 text-start text-lg font-bold sm:text-xs md:text-base">
           <div className="col-span-5 flex" onClick={() => setSortBy('default')}>
             name
           </div>
           <div className="col-span-6 col-start-6 grid grid-cols-6 place-items-center gap-6 text-center">
             <div
               className={`col-span-2 flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 transition-all hover:opacity-80 ${
-                sortBy === 'timeSpend' ? 'border shadow ' : ''
+                sortBy === 'timeSpend' ? 'border shadow' : ''
               }`}
               onClick={() => setSortingConfig('timeSpend')}
             >
@@ -37,14 +37,14 @@ export default function TaskList({ columnId, onMouseEnter, onMouseLeave }: TaskL
               {sortBy === 'timeSpend' ? isDescending ? <LuArrowBigDown /> : <LuArrowBigUp /> : null}
             </div>
             <div
-              className={`col-span-2 flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 transition-all hover:opacity-80 ${sortBy === 'dueDate' ? 'border shadow ' : ''}`}
+              className={`col-span-2 flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 transition-all hover:opacity-80 ${sortBy === 'dueDate' ? 'border shadow' : ''}`}
               onClick={() => setSortingConfig('dueDate')}
             >
               Due Date
               {sortBy === 'dueDate' ? isDescending ? <LuArrowBigDown /> : <LuArrowBigUp /> : null}
             </div>
             <div
-              className={`col-span-2 flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 transition-all hover:opacity-80 ${sortBy === 'priority' ? 'border shadow ' : ''}`}
+              className={`col-span-2 flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 transition-all hover:opacity-80 ${sortBy === 'priority' ? 'border shadow' : ''}`}
               onClick={() => setSortingConfig('priority')}
             >
               Priority

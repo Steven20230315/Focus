@@ -75,7 +75,7 @@ type TimerState = {
   duration: number;
   // How much time is already elapsed
   elapsedTime: number;
-  // for tracking the setTimout
+  // for tracking the setTimeout
   // for tracking the setInterval
   intervalId: ReturnType<typeof setInterval> | null;
   remainingTime: number;

@@ -89,23 +89,23 @@ export default function CreateTask({ onMouseEnter, onMouseLeave, listId, columnI
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             ref={inputRef}
-            className="boder-white w-1/2 appearance-none bg-transparent text-black placeholder-black/50 focus:opacity-90 focus:outline-none  "
+            className="w-1/2 appearance-none border-white bg-transparent text-black placeholder-black/50 focus:opacity-90 focus:outline-none"
           />
-          <div className=" flex min-w-0 flex-1 items-center gap-3 ">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             <div className="flex gap-2">
               <Datepicker />
               <PriorityPicker />
             </div>
-            <div className="ml-auto mr-10 flex gap-2">
+            <div className="mr-10 ml-auto flex gap-2">
               <button
-                className={`rounded-md bg-slate-400 px-2 py-1 text-xs hover:shadow-md hover:shadow-gray-600 hover:ring ${!title ? 'cursor-not-allowed' : 'cursor-pointer'} `}
+                className={`rounded-md bg-slate-400 px-2 py-1 text-xs hover:shadow-md hover:ring hover:shadow-gray-600 ${!title ? 'cursor-not-allowed' : 'cursor-pointer'} `}
                 disabled={!title}
                 type="submit"
               >
                 Add
               </button>
               <button
-                className="rounded-md bg-slate-400 px-2 py-1 text-xs hover:shadow-md hover:shadow-gray-600 hover:ring"
+                className="rounded-md bg-slate-400 px-2 py-1 text-xs hover:shadow-md hover:ring hover:shadow-gray-600"
                 type="reset"
                 onClick={() => setIsFormOpen(false)}
               >
