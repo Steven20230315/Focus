@@ -1,7 +1,7 @@
 import { Draggable, type DraggableProvided } from '@hello-pangea/dnd';
 import { type ColumnId } from '../../types';
 import TaskList from '../task/TaskList';
-import { Disclosure, Transition } from '@headlessui/react';
+import { Disclosure, DisclosureButton, DisclosurePanel, Transition } from '@headlessui/react';
 import CreateTask2 from '../task/CreateTask';
 type ColumnItemProps = {
   index: number;
@@ -31,13 +31,13 @@ export default function ColumnItem({ index, columnId }: ColumnItemProps) {
           <Disclosure>
             {({ open }) => (
               <>
-                <Disclosure.Button className="flex items-center justify-center">
+                <DisclosureButton className="flex items-center justify-center">
                   <BsCaretRightFill className={open ? 'rotate-90 transform' : ''} />
-                  <h3 className="cursor-not-allowed text-center text-2xl  font-bold sm:px-8 sm:text-sm md:text-lg ">
+                  <h3 className="cursor-not-allowed text-center text-2xl font-bold sm:px-8 sm:text-sm md:text-lg">
                     {columnData.role}
                     {/* {column.role} */}
                   </h3>
-                </Disclosure.Button>
+                </DisclosureButton>
 
                 <Transition
                   enter="transition duration-100 ease-out"
@@ -47,7 +47,7 @@ export default function ColumnItem({ index, columnId }: ColumnItemProps) {
                   leaveFrom="transform scale-100 opacity-100"
                   leaveTo="transform scale-95 opacity-0"
                 >
-                  <Disclosure.Panel className="flex flex-col  text-sm">
+                  <DisclosurePanel className="flex flex-col text-sm">
                     <TaskList
                       columnId={columnData.columnId}
                       onMouseEnter={handleMouseEnter}
@@ -60,7 +60,7 @@ export default function ColumnItem({ index, columnId }: ColumnItemProps) {
                       columnId={columnData.columnId}
                       columnRole={columnData.role}
                     />
-                  </Disclosure.Panel>
+                  </DisclosurePanel>
                 </Transition>
               </>
             )}

@@ -41,7 +41,7 @@ const TaskItem = memo(function TaskItem({ task, index }: TaskItemProps) {
     <Draggable draggableId={task.taskId} index={index}>
       {(provided: DraggableProvided) => (
         <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-          <div className="my-1 grid h-full cursor-move grid-cols-12 content-center items-center gap-4 rounded-md py-2 text-sm   ">
+          <div className="my-1 grid h-full cursor-move grid-cols-12 content-center items-center gap-4 rounded-md py-2 text-sm">
             <div className="col-span-5 flex gap-6">
               <TaskTitle taskId={task.taskId} title={task.title} columnId={task.columnId} />
               <button type="button" onClick={() => setOpen(!open)} title="Details">
@@ -64,11 +64,11 @@ const TaskItem = memo(function TaskItem({ task, index }: TaskItemProps) {
                 {Math.floor(task.timeSpend / 60)}:
                 {task.timeSpend % 60 < 10 ? `0${task.timeSpend % 60}` : task.timeSpend % 60}
               </div>
-              <div className="col-span-2  flex  w-full items-center justify-center rounded-md px-2 py-1 hover:ring  ">
+              <div className="col-span-2 flex w-full items-center justify-center rounded-md px-2 py-1 hover:ring">
                 <Datepicker onDateSelect={updateDate} date={task.dueDate} />
                 {/* <div>{task.dueDate}</div> */}
               </div>
-              <div className="col-span-2  flex h-full w-full items-center justify-center rounded-md px-2 py-1 hover:ring  ">
+              <div className="col-span-2 flex h-full w-full items-center justify-center rounded-md px-2 py-1 hover:ring">
                 <PriorityPicker onPrioritySelect={updatePriority} priority={task.priority} />
               </div>
               {/* <div>

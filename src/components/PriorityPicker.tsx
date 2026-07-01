@@ -1,4 +1,4 @@
-import { Menu } from '@headlessui/react';
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { IoFlag } from 'react-icons/io5';
 import { IoFlagOutline } from 'react-icons/io5';
 import { useRef, useState } from 'react';
@@ -10,7 +10,7 @@ type PriorityPickerProps = {
 };
 
 export default function PriorityPicker({ priority: priorityProp, onPrioritySelect }: PriorityPickerProps) {
-  // const priorities = ['Urgen', 'High', 'Normal', 'Low'];
+  // const priorities = ['Urgent', 'High', 'Normal', 'Low'];
 
   const [priority, setPriority] = useState<Priority | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,10 +30,10 @@ export default function PriorityPicker({ priority: priorityProp, onPrioritySelec
   };
 
   return (
-    <Menu as="div" className="relative  flex self-center rounded-sm   text-left  ">
+    <Menu as="div" className="relative flex self-center rounded-sm text-left">
       {/* // Default value of the priority is Normal */}
       <input type="text" hidden readOnly name="priority" value={priority || 'Normal'} ref={inputRef} />
-      <Menu.Button>
+      <MenuButton>
         {priorityProp ? (
           <IoFlag className={`h-5 w-5 ${priorities[priorityProp]}`} />
         ) : !priority ? (
@@ -41,24 +41,24 @@ export default function PriorityPicker({ priority: priorityProp, onPrioritySelec
         ) : (
           <IoFlag className={`h-5 w-5 ${priorities[priority]}`} />
         )}
-      </Menu.Button>
+      </MenuButton>
 
-      <Menu.Items className="absolute left-0 top-8 z-30 flex w-36 origin-top-left flex-col items-center justify-center rounded-md border  border-black bg-slate-600 transition-all ">
+      <MenuItems className="absolute top-8 left-0 z-30 flex w-36 origin-top-left flex-col items-center justify-center rounded-md border border-black bg-slate-600 transition-all">
         {Object.entries(priorities).map(([key, value]) => (
-          <Menu.Item key={key}>
-            {({ active }) => (
+          <MenuItem key={key}>
+            {({ focus }) => (
               <button
                 type="button"
                 onClick={() => updatePriority(key as Priority)}
-                className={`mx-auto flex w-full items-center gap-5 rounded-md px-2 py-1 text-lg ${value} ${active ? 'bg-slate-300 opacity-80' : ''} `}
+                className={`mx-auto flex w-full items-center gap-5 rounded-md px-2 py-1 text-lg ${value} ${focus ? 'bg-slate-300 opacity-80' : ''} `}
               >
                 <IoFlag className="h-5 w-5" />
                 <span>{key}</span>
               </button>
             )}
-          </Menu.Item>
+          </MenuItem>
         ))}
-      </Menu.Items>
+      </MenuItems>
     </Menu>
   );
 }

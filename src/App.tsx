@@ -16,11 +16,11 @@ function App() {
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex">
         <div
-          className={`${!isSidebarOpen && '-ml-[185px]'} sticky top-0 z-10 flex h-screen w-[250px] justify-between gap-6 bg-stone-200 font-mono transition-all duration-500`}
+          className={`${!isSidebarOpen && '-ml-46.25'} sticky top-0 z-10 flex h-screen w-62.5 justify-between gap-6 bg-stone-200 font-mono transition-all duration-500`}
         >
           <Sidebar />
         </div>
-        <div className="grow px-6 ">
+        <div className="grow px-6">
           <View />
         </div>
       </div>

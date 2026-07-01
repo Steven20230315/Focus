@@ -1,4 +1,4 @@
-import { type FormEvent, useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { createNewListWithDefaultColumns } from '../../utils/createNewList';
 import { useDispatch, useSelector } from 'react-redux';
 import { addListWithDefaultColumns } from './listSlice';
@@ -12,26 +12,25 @@ export default function CreateList() {
   const [isOpen, setIsOpen] = useState(false);
   const listTitles = useSelector(selectAllListTitles);
   const [title, setTitle] = useState('');
-  const [labelMessage, setLabelMessage] = useState('Enter list title');
-  useEffect(() => {
-    const listExists = listTitles.includes(title);
-    setLabelMessage(listExists ? 'List already exists' : 'Enter list title');
-  }, [listTitles, title]);
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const trimmedTitle = title.trim();
+  const listExists = trimmedTitle !== '' && listTitles.includes(trimmedTitle);
+  const labelMessage = listExists ? 'List already exists' : 'Enter list title';
+
+  const onSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const trimTitle = title.trim();
-    if (!trimTitle) {
+    if (!trimmedTitle) {
       console.log('Please enter a title');
       return;
     }
-    if (listTitles.includes(trimTitle)) {
-      setLabelMessage('List already exists');
+
+    if (listExists) {
       return;
     }
-    dispatch(addListWithDefaultColumns(createNewListWithDefaultColumns(trimTitle)));
-    setTitle(''); // Reset title state instead of using form reset
+
+    dispatch(addListWithDefaultColumns(createNewListWithDefaultColumns(trimmedTitle)));
+    setTitle('');
     setIsOpen(false);
   };
 
@@ -46,7 +45,6 @@ export default function CreateList() {
         </button>
       ) : (
         <form onSubmit={onSubmit} autoComplete="off" className="mt-4">
-          {/* To position label  */}
           <div className="relative">
             <input
               type="text"
@@ -58,7 +56,7 @@ export default function CreateList() {
             />
             <label
               htmlFor="title"
-              className="absolute left-0 top-0 px-2 py-1 text-slate-600 transition-all peer-placeholder-shown:text-gray-400 peer-focus:-top-7 peer-focus:text-gray-300 "
+              className="absolute top-0 left-0 px-2 py-1 text-slate-600 transition-all peer-placeholder-shown:text-gray-400 peer-focus:-top-7 peer-focus:text-gray-300"
             >
               {labelMessage}
             </label>

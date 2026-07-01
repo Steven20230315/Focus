@@ -1,5 +1,5 @@
 import { useState, type PointerEvent } from 'react';
-import { Menu, Transition } from '@headlessui/react';
+import { Menu, Transition, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { LuCalendarPlus } from 'react-icons/lu';
 import { LuCalendar } from 'react-icons/lu';
 import {
@@ -27,7 +27,7 @@ export default function Datepicker({ onDateSelect, date: dateProp }: DatePickerP
   const today = startOfDay(new Date());
 
   // When dateProp is provided but its not a valid date, it defaults to "0001-01-01". This ensure selectedDay is always a valid date
-  // However, this means the consumer of this component won't know it provid a invalid date.
+  // However, this means the consumer of this component won't know it provide a invalid date.
   const [selectedDay, setSelectedDay] = useState<Date>(() => {
     const parsedDate = parse(dateProp || '0001-01-01', 'yyyy-MM-dd', new Date());
     return isValid(parsedDate) ? parsedDate : parse('0001-01-01', 'yyyy-MM-dd', new Date());
@@ -96,10 +96,10 @@ export default function Datepicker({ onDateSelect, date: dateProp }: DatePickerP
 
   function renderCalendarButton(open: boolean) {
     const fallbackDate = '0001-01-01'; // Constant for fallback date
-    const formatedSelectedDay = format(selectedDay, 'yyyy-MM-dd');
+    const formattedSelectedDay = format(selectedDay, 'yyyy-MM-dd');
     // Determine whether to use LuCalendar or LuCalendarPlus.
-    // Only use LuCalendarPlus whne there is no valid date and datepicker it closed
-    const hasValidDate = (dateProp && dateProp !== fallbackDate) || formatedSelectedDay !== fallbackDate;
+    // Only use LuCalendarPlus when there is no valid date and datepicker it closed
+    const hasValidDate = (dateProp && dateProp !== fallbackDate) || formattedSelectedDay !== fallbackDate;
     const useLuCalendar = open || hasValidDate;
     const CalendarIcon = useLuCalendar ? LuCalendar : LuCalendarPlus;
 
@@ -108,9 +108,9 @@ export default function Datepicker({ onDateSelect, date: dateProp }: DatePickerP
     if (dateProp && dateProp !== fallbackDate) {
       // Use day prop if it's valid
       displayDate = dateProp;
-    } else if (!dateProp && formatedSelectedDay !== fallbackDate) {
-      // Use formatedSelectedDay if it's valid and dateProp isn't
-      displayDate = formatedSelectedDay;
+    } else if (!dateProp && formattedSelectedDay !== fallbackDate) {
+      // Use formattedSelectedDay if it's valid and dateProp isn't
+      displayDate = formattedSelectedDay;
     }
     return (
       <>
@@ -138,9 +138,9 @@ export default function Datepicker({ onDateSelect, date: dateProp }: DatePickerP
             name="date"
             readOnly
           />
-          <Menu.Button onClick={toggleMenu} className={' flex items-center justify-center  gap-4'}>
+          <MenuButton onClick={toggleMenu} className={'flex items-center justify-center gap-4'}>
             {renderCalendarButton(open)}
-          </Menu.Button>
+          </MenuButton>
           <Transition
             enter="transform transition duration-100 ease-in"
             enterFrom="opacity-0 scale-95"
@@ -149,65 +149,65 @@ export default function Datepicker({ onDateSelect, date: dateProp }: DatePickerP
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Menu.Items className="absolute -right-28 z-30 mt-2 w-60 rounded-md bg-slate-400 px-4 py-2 transition-all">
+            <MenuItems className="absolute -right-28 z-30 mt-2 w-60 rounded-md bg-slate-400 px-4 py-2 transition-all">
               <div className="flex items-center">
                 <h2 className="flex-auto text-sm font-semibold text-gray-900">
                   {format(firstDayCurrentMonth, 'MMMM yyyy')}
                 </h2>
-                <Menu.Item>
-                  {({ active }) => (
+                <MenuItem>
+                  {({ focus }) => (
                     <button
                       type="button"
                       onClick={prevMonth}
-                      className={`-my-1.5 flex flex-none items-center justify-center rounded-md p-1.5 text-gray-200 hover:text-gray-50 hover:opacity-80 hover:shadow ${active ? 'text-gray-500' : 'text-gray-400'}`}
+                      className={`-my-1.5 flex flex-none items-center justify-center rounded-md p-1.5 text-gray-200 hover:text-gray-50 hover:opacity-80 hover:shadow ${focus ? 'text-gray-500' : 'text-gray-400'}`}
                     >
                       <span className="sr-only">Previous month</span>
                       <FiChevronLeft className="h-5 w-5" aria-hidden="true" />
                     </button>
                   )}
-                </Menu.Item>
-                <Menu.Item>
-                  {({ active }) => (
+                </MenuItem>
+                <MenuItem>
+                  {({ focus }) => (
                     <button
                       type="button"
                       onClick={nextMonth}
-                      className={`-my-1.5 flex flex-none items-center justify-center rounded-md p-1.5  text-gray-200 hover:text-gray-50 hover:shadow ${active ? 'text-gray-500' : 'text-gray-400'}`}
+                      className={`-my-1.5 flex flex-none items-center justify-center rounded-md p-1.5 text-gray-200 hover:text-gray-50 hover:shadow ${focus ? 'text-gray-500' : 'text-gray-400'}`}
                     >
                       <span className="sr-only">Previous month</span>
                       <FiChevronRight className="h-5 w-5" aria-hidden="true" />
                     </button>
                   )}
-                </Menu.Item>
+                </MenuItem>
               </div>
-              <div className=" grid md:divide-gray-200">
-                <div className="mt-3 grid grid-cols-7 text-center text-xs font-medium leading-6 text-gray-900">
+              <div className="grid md:divide-gray-200">
+                <div className="mt-3 grid grid-cols-7 text-center text-xs leading-6 font-medium text-gray-900">
                   {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
                     <div key={`day ${index}`}>{day}</div>
                   ))}
                 </div>
 
-                <div className=" mt-2 grid grid-cols-7 text-sm">
+                <div className="mt-2 grid grid-cols-7 text-sm">
                   {newDays.map((day, index) => (
-                    <Menu.Item
+                    <MenuItem
                       as="div"
                       onClick={(e) => e.preventDefault()}
                       key={day.toString()}
                       className={index > 6 ? 'border-t border-gray-200 py-1.5' : 'py-1.5'}
                     >
-                      {({ active }) => (
+                      {({ focus }) => (
                         <button
                           type="button"
                           onClick={() => handleDateSelect(day)}
-                          className={getDayButtonClass(day, selectedDay, today, active)}
+                          className={getDayButtonClass(day, selectedDay, today, focus)}
                         >
                           <time dateTime={format(day, 'yyyy-MM-dd')}>{format(day, 'd')}</time>
                         </button>
                       )}
-                    </Menu.Item>
+                    </MenuItem>
                   ))}
                 </div>
               </div>
-            </Menu.Items>
+            </MenuItems>
           </Transition>
         </>
       )}

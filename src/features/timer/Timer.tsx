@@ -19,7 +19,7 @@ export default function Timer() {
 
   return (
     <>
-      <div className="absolute bottom-5 right-1/2 z-50 flex w-fit translate-x-1/2 items-center justify-center gap-12 rounded-lg bg-black px-4 py-3">
+      <div className="absolute right-1/2 bottom-5 z-50 flex w-fit translate-x-1/2 items-center justify-center gap-12 rounded-lg bg-black px-4 py-3">
         <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-slate-50/50 text-white transition-all">
           {Math.floor((duration - elapsedTime) / 60)}:
           {(duration - elapsedTime) % 60 < 10 ? `0${(duration - elapsedTime) % 60}` : (duration - elapsedTime) % 60}

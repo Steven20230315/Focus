@@ -15,31 +15,30 @@ export default function LinkList() {
 
   const isSidebarOpen = useSelector((state: RootState) => state.list.isSidebarOpen);
 
+  if (!listTitlesAndIdsInOrder.length) return 'No list';
   return (
-    (
-      <Droppable droppableId="sidebar">
-        {(provided: DroppableProvided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className={`bg-inherit/90 flex flex-col  gap-5 ${!isSidebarOpen && 'opacity-0'}`}
-          >
-            {listTitlesAndIdsInOrder.map(
-              (
-                list: {
-                  listId: List['listId'];
-                  listTitle: List['title'];
-                },
-                index: number,
-              ) => (
-                // Assuming Link component takes listId and listTitle as props
-                <Link key={list.listId} listId={list.listId!} index={index} listTitle={list.listTitle!} />
-              ),
-            )}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    ) || 'No list'
+    <Droppable droppableId="sidebar">
+      {(provided: DroppableProvided) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          className={`flex flex-col gap-5 bg-inherit/90 ${!isSidebarOpen && 'opacity-0'}`}
+        >
+          {listTitlesAndIdsInOrder.map(
+            (
+              list: {
+                listId: List['listId'];
+                listTitle: List['title'];
+              },
+              index: number,
+            ) => (
+              // Assuming Link component takes listId and listTitle as props
+              <Link key={list.listId} listId={list.listId!} index={index} listTitle={list.listTitle!} />
+            ),
+          )}
+          {provided.placeholder}
+        </div>
+      )}
+    </Droppable>
   );
 }
